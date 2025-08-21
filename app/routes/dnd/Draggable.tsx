@@ -13,7 +13,13 @@ export function Draggable(props) {
   return (
     <button
       className='px-3 py-2 border-amber-300 border-2'
-      ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      ref={setNodeRef} style={style}
+      onDragEnd={e => {
+        console.log(e);
+      }}
+      {...listeners} {...attributes}
+
+    >
       {props.children}
     </button>
   );

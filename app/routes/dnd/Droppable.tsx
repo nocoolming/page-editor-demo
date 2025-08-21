@@ -11,7 +11,13 @@ export function Droppable(props) {
   
   
   return (
-    <div ref={setNodeRef} style={style}>
+    <div 
+    ref={setNodeRef} 
+    style={style}
+    onDragEnd={e => {
+      console.log(e);
+    }}
+    >
       {props.children}
     </div>
   );
