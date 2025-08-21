@@ -4,10 +4,10 @@ import { DndContext } from "@dnd-kit/core";
 import { nanoid } from "nanoid";
 
 // 导入拆分出来的组件和类型
-import type { Block } from './types';
+import type { Block } from './types/types';
 import { updateBlock } from './utils';
-import { DraggableItem } from './DraggableItem';
-import { DroppableContainer } from './DroppableContainer';
+import { DraggableItem } from './dnd/DraggableItem';
+import { DroppableContainer } from './dnd/DroppableContainer';
 import { BlockRenderer } from './BlockRenderer';
 
 export default function Editor() {

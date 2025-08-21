@@ -1,5 +1,5 @@
-import type { Block } from './types';
-import { DroppableContainer } from './DroppableContainer';
+import type { Block } from './types/types';
+import { DroppableContainer } from './dnd/DroppableContainer';
 
 export function BlockRenderer({
     block,
