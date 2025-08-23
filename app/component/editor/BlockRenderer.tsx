@@ -1,4 +1,4 @@
-import type { Block } from './types/types';
+import type { Block } from './types/Block';
 import { DroppableContainer } from './dnd/DroppableContainer';
 
 export function BlockRenderer({

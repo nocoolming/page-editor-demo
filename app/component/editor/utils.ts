@@ -1,4 +1,4 @@
-import type { Block } from './types/types';
+import type { Block } from './types/Block';
 
 // 工具函数：递归更新 block 树
 export function updateBlock(
