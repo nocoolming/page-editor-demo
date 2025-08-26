@@ -16,6 +16,9 @@ export default function Home() {
         <li>
           <NavLink to='/edit'>edit</NavLink>
         </li>
+        <li>
+          <NavLink to='/sort'>Sortable</NavLink>
+        </li>
       </ol>
     </div>
   );
