@@ -19,6 +19,12 @@ export default function Home() {
         <li>
           <NavLink to='/sort'>Sortable</NavLink>
         </li>
+        <li>
+          <NavLink to='/demo'>Demo</NavLink>
+        </li>
+        <li>
+          <NavLink to='/ming'>Ming</NavLink>
+        </li>
       </ol>
     </div>
   );
