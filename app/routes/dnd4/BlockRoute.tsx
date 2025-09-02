@@ -35,7 +35,7 @@ export default function BlockRoute() {
     const [dataset, setDataSet] = useState({});
 
     let cache = initCache(blocks, {});
-    console.log(JSON.stringify(cache));
+    // console.log(JSON.stringify(cache));
 
     const handlerDragEnd = (e: DragEndEvent) => {
         const activeId = String(e.active.id);
@@ -51,36 +51,37 @@ export default function BlockRoute() {
         }
 
         setBlocks(prevBlocks => {
+            debugger;
             // 深拷贝 （保持纯数据结构）
             const newBlocks: Block[] = JSON.parse(JSON.stringify(prevBlocks));
 
-            // 找到over节点
-            const overBlock = findNode({
-                id: overId,
-                dataset: cache
-            });
+            //1. ww newBlocks 中删除active节点（并拿到原位置信息）
+            const removedInfo = removeBlock(newBlocks, activeId);
+            if (!removedInfo) {
+                // 没找到
+                return prevBlocks;
+            }
+
+            const { removed, parentId, index } = removedInfo;
+
+            // 2. 找到over节点 
+            const overBlock = findNode(overId, newBlocks);
             if (!overBlock) {
-                return prevBlocks;
-            }
-            debugger;
-            const block: Block = findNode({ id: activeId, dataset: cache });
-
-            // 防止把节点插入到自己的子孙中（防止循环依赖）
-            if (isDescendant(block, overId) || block.id === overId) {
-                return prevBlocks;
+                insertBlock(newBlocks, removed, index, parentId);
+                return newBlocks;
             }
 
-            // 删除原来的位置 
-            removeBlock({ id: activeId, dataset: cache });
+            // 3. 防止把节点插入到自己的子孙中
+            if (isDescendant(removed, overId) || removed.id === overId) {
+                // 
+                return prevBlocks;
+            }
 
-            // 插入到overNode.children（默认末尾）, 并更新parentId
-            insertBlock({
-                block: block,
-                index: 0,
-                parentId: overId,
-                dataset: cache,
-            })
+            // 4.插入到overBlock.children
+            overBlock.children.push(removed);
 
+            console.log('moved', activeId, '->', overId);
+            console.log('new blocks:', JSON.stringify(newBlocks, null, 2));
             return newBlocks;
         })
     }
