@@ -51,7 +51,7 @@ export default function BlockRoute() {
         }
 
         setBlocks(prevBlocks => {
-            debugger;
+            // debugger;
             // 深拷贝 （保持纯数据结构）
             const newBlocks: Block[] = JSON.parse(JSON.stringify(prevBlocks));
 
