@@ -25,6 +25,9 @@ export default function Home() {
         <li>
           <NavLink to='/ming'>Ming</NavLink>
         </li>
+        <li>
+          <NavLink to='/dnd5'>dnd demo5</NavLink>
+        </li>
       </ol>
     </div>
   );
