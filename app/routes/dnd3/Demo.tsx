@@ -1,177 +1,163 @@
-// App.tsx
-import React from "react";
-import { createRoot } from "react-dom/client";
-import { makeAutoObservable, observable } from "mobx";
-import { observer } from "mobx-react-lite";
-import {
-  DndContext,
-  useDraggable,
-  useDroppable,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  closestCenter,
-} from "@dnd-kit/core";
-import type { Block } from "./Block";
-import { editStore as store } from "./store/store";
+import React, { useState } from "react";
+import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
-/** ============ UI - 可拖拽Block ============ */
-const DraggableBlock = observer(({ block }: { block: Block }) => {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({ id: block.id });
+// ---------------- Block Config ----------------
+const config = {
+  text: {
+    label: "文本",
+    render: (props: any) => <div>{props.text}</div>,
+    fields: [{ name: "text", label: "文本内容", type: "string", default: "新建文本" }],
+  },
+  image: {
+    label: "图片",
+    render: (props: any) => <img src={props.src} alt={props.alt} style={{ maxWidth: 150 }} />,
+    fields: [
+      { name: "src", label: "图片地址", type: "string", default: "" },
+      { name: "alt", label: "替代文字", type: "string", default: "图片" },
+    ],
+  },
+};
 
-  const style: React.CSSProperties = {
-    transform: transform
-      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-      : undefined,
-    opacity: isDragging ? 0.6 : 1,
-    border: "1px solid #ddd",
-    background: "#fff",
-    borderRadius: 8,
-    padding: 8,
-    margin: "6px 0",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+type Block = {
+  id: string;
+  type: keyof typeof config;
+  props: Record<string, any>;
+  children: Block[];
+};
+
+// ---------------- Block List (左边) ----------------
+function DraggableDef({ type }: { type: keyof typeof config }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: "def-" + type,
+    data: { defType: type },
+  });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    border: "1px solid #aaa",
+    padding: "4px",
+    margin: "4px",
+    background: "#eee",
     cursor: "grab",
   };
 
   return (
-    <div ref={setNodeRef} {...attributes} {...listeners} style={style}>
-      <div style={{ fontSize: 12, color: "#666", marginBottom: 4 }}>
-        #{block.id} / {block.type}（父: {block.parentId}）
-      </div>
-
-      {/* 内容区：可简单编辑文本观察 MobX 响应 */}
-      {block.type === "text" && (
-        <input
-          value={block.text ?? ""}
-          onChange={(e) => store.updateText(block.id, e.target.value)}
-          style={{
-            width: "100%",
-            border: "1px solid #ddd",
-            borderRadius: 6,
-            padding: "6px 8px",
-          }}
-        />
-      )}
-      {block.type === "image" && (
-        <div style={{ padding: "6px 8px" }}>🖼 {block.text ?? "图片"}</div>
-      )}
-      {block.type === "container" && (
-        <div style={{ padding: "6px 8px" }}>{block.text ?? "容器"}</div>
-      )}
-
-      {/* 如果是容器：内部是一个可放置区，能把其它块拖进来 */}
-      {block.type === "container" && (
-        <DroppableChildren parentId={block.id} childrenBlocks={block.children} />
-      )}
+    <div ref={setNodeRef} {...listeners} {...attributes} style={style}>
+      {config[type].label}
     </div>
   );
-});
+}
 
-/** ============ UI - droppable 子区域（容器内部） ============ */
-const DroppableChildren = observer(
-  ({
-    parentId,
-    childrenBlocks,
-  }: {
-    parentId: string;
-    childrenBlocks: Block[];
-  }) => {
-    const { isOver, setNodeRef } = useDroppable({ id: parentId });
-    return (
-      <div
-        ref={setNodeRef}
-        style={{
-          border: "2px dashed " + (isOver ? "#4096ff" : "#e5e7eb"),
-          background: isOver ? "rgba(64,150,255,0.08)" : "#fafafa",
-          padding: 8,
-          borderRadius: 8,
-          minHeight: 40,
-        }}
-      >
-        {childrenBlocks.length === 0 && (
-          <div style={{ color: "#9ca3af", fontSize: 12 }}>
-            拖动块到这里（容器内）
-          </div>
-        )}
-        {childrenBlocks.map((child) => (
-          <DraggableBlock key={child.id} block={child} />
-        ))}
-      </div>
-    );
-  }
-);
-
-/** ============ UI - 根层可放置区域 ============ */
-const RootDroppable = observer(() => {
-  // 根区域的 droppable id 固定为 "root"
-  const { isOver, setNodeRef } = useDroppable({ id: "root" });
+function BlockList() {
   return (
-    <div
-      ref={setNodeRef}
-      style={{
-        border: "2px dashed " + (isOver ? "#22c55e" : "#e5e7eb"),
-        background: isOver ? "rgba(34,197,94,0.08)" : "#fff",
-        padding: 12,
-        borderRadius: 10,
-        minHeight: 120,
-      }}
-    >
-      {store.rootBlocks.length === 0 && (
-        <div style={{ color: "#9ca3af", fontSize: 12 }}>拖动块到根层</div>
-      )}
-      {store.rootBlocks.map((b) => (
-        <DraggableBlock key={b.id} block={b} />
+    <div style={{ width: "150px", borderRight: "1px solid #ccc", padding: "8px" }}>
+      <h4>Blocks</h4>
+      {Object.keys(config).map((key) => (
+        <DraggableDef key={key} type={key as keyof typeof config} />
       ))}
     </div>
   );
-});
+}
 
-/** ============ App ============ */
-const App = observer(() => {
-  const sensors = useSensors(useSensor(PointerSensor));
+// ---------------- 编辑区 (中间) ----------------
+function DroppableEditor({
+  blocks,
+  setBlocks,
+  setSelected,
+}: {
+  blocks: Block[];
+  setBlocks: React.Dispatch<React.SetStateAction<Block[]>>;
+  setSelected: (id: string) => void;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: "editor" });
 
-  const onDragEnd = (e: DragEndEvent) => {
-    const { active, over } = e;
-    if (!active || !over) return;
-    const activeId = String(active.id);
-    const overId = String(over.id);
-
-    if (activeId === overId) return;
-
-    // 仅允许拖到：容器的 children 区 或 根区域
-    // 根区域 id === "root"
-    // 容器的 droppable id === 容器 block 的 id
-    store.moveNodeToParent(activeId, overId);
+  const style = {
+    flex: 1,
+    padding: "16px",
+    minHeight: "400px",
+    background: isOver ? "#def" : "#fafafa",
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={onDragEnd}
-    >
-      <div
-        style={{
-          padding: 16,
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          gap: 12,
-          maxWidth: 900,
-          margin: "0 auto",
-        }}
-      >
-        <h2 style={{ margin: 0 }}>MobX + dnd-kit：拖到容器或根</h2>
-        <div style={{ fontSize: 12, color: "#6b7280" }}>
-          说明：拖动任意块，放入容器（蓝框）或放到根层（绿框）。禁止把父节点拖进自己的子树。
+    <div ref={setNodeRef} style={style}>
+      <h4>Editor</h4>
+      {blocks.map((b) => (
+        <div
+          key={b.id}
+          style={{ border: "1px dashed #aaa", margin: "4px", padding: "4px" }}
+          onClick={() => setSelected(b.id)}
+        >
+          {config[b.type].render(b.props)}
         </div>
+      ))}
+    </div>
+  );
+}
 
-        {/* 根层可放置区域（把块放到根） */}
-        <RootDroppable />
+// ---------------- Inspector (右边) ----------------
+function Inspector({
+  block,
+  update,
+}: {
+  block: Block | null;
+  update: (id: string, props: Record<string, any>) => void;
+}) {
+  if (!block) return <div style={{ padding: "8px" }}>未选中</div>;
+
+  return (
+    <div style={{ width: "200px", borderLeft: "1px solid #ccc", padding: "8px" }}>
+      <h4>属性</h4>
+      {config[block.type].fields.map((f) => (
+        <div key={f.name} style={{ marginBottom: "8px" }}>
+          <label>{f.label}:</label>
+          <input
+            type="text"
+            value={block.props[f.name]}
+            onChange={(e) => update(block.id, { [f.name]: e.target.value })}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------------- Main App ----------------
+export default function App() {
+  const [blocks, setBlocks] = useState<Block[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const selectedBlock = blocks.find((b) => b.id === selectedId) || null;
+
+  function handleDragEnd(event: any) {
+    const { over, active } = event;
+    if (!over) return;
+
+    if (over.id === "editor" && active.data.current?.defType) {
+      const type = active.data.current.defType as keyof typeof config;
+      const newBlock: Block = {
+        id: Date.now().toString(),
+        type,
+        props: Object.fromEntries(config[type].fields.map((f) => [f.name, f.default])),
+        children: [],
+      };
+      setBlocks((prev) => [...prev, newBlock]);
+    }
+  }
+
+  function updateBlock(id: string, newProps: Record<string, any>) {
+    setBlocks((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, props: { ...b.props, ...newProps } } : b))
+    );
+  }
+
+  return (
+    <DndContext onDragEnd={handleDragEnd}>
+      <div style={{ display: "flex", height: "100vh" }}>
+        <BlockList />
+        <DroppableEditor blocks={blocks} setBlocks={setBlocks} setSelected={setSelectedId} />
+        <Inspector block={selectedBlock} update={updateBlock} />
       </div>
     </DndContext>
   );
-});
-
-export default App;
+}

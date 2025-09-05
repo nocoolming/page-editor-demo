@@ -7,4 +7,5 @@ export default [
     route('demo', 'routes/dnd3/Demo.tsx'),
     route('ming', 'routes/dnd4/BlockRoute.tsx'),
     route('dnd5', 'routes/dnd5/View.tsx'),
+    route('dnd6', 'routes/dnd6/Demo.tsx'),
 ] satisfies RouteConfig;

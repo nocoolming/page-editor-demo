@@ -112,7 +112,6 @@ class EditorStore {
 
         const { block, parent } = o;
 
-
         if (parent) {
             const index = parent.children.findIndex(i => i.id === id);
             if (index >= 0) {
