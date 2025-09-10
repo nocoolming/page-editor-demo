@@ -6,7 +6,7 @@ import { store } from "./store";
 export const Inspector = observer(function Inspector() {
   const node = store.selectedBlock;
   return (
-    <div className="w-64 border p-3 bg-white">
+    <div className="w-64 border bg-white">
       <div className="font-semibold mb-3">Inspector</div>
       {!node && <div className="text-gray-500">未选择 Block</div>}
       {node && (

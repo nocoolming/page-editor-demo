@@ -31,9 +31,7 @@ export default function Home() {
         <li>
           <NavLink to='/dnd6'>dnd demo6</NavLink>
         </li>
-        <li>
-          <NavLink to='/dnd7'>dnd demo7</NavLink>
-        </li>
+       
       </ol>
     </div>
   );

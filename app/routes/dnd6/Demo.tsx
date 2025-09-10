@@ -1,5 +1,8 @@
 import React from "react";
-import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
+import { 
+  DndContext,
+   closestCenter, 
+   type DragEndEvent } from "@dnd-kit/core";
 import { observer } from "mobx-react-lite";
 import type { Block, BlockType } from "./types";
 import { PaletteItem } from "./PaletteItem";
@@ -95,8 +98,9 @@ const App = observer(function App() {
   };
 
   return (
-    <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
-      <div className="flex flex-row gap-3 p-3 min-h-screen bg-gray-50">
+    <DndContext onDragEnd={handleDragEnd} 
+    collisionDetection={closestCenter}>
+      <div className="flex flex-row gap-3  min-h-screen bg-gray-50">
         {/* 左侧：固定宽度 */}
         <div className="w-48 border bg-white p-3">
           <div className="font-semibold mb-3">Blocks</div>

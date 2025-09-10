@@ -15,7 +15,7 @@ export const blockConfigs: Record<BlockType, BlockConfig> = {
   container: {
     fields: [],
     render: (_, children) => (
-      <div className="p-2 border-dashed border-2 border-gray-300 min-h-[36px]">{children}</div>
+      <div className=" border-dashed border-2 border-gray-300 min-h-[36px]">{children}</div>
     ),
     acceptsChildren: true,
   },

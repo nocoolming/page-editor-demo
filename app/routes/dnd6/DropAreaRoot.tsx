@@ -6,7 +6,7 @@ export function DropAreaRoot({ children }: { children?: React.ReactNode }) {
   return (
     <div
       ref={setNodeRef}
-      className={`flex-1 p-3 border-2 ${isOver ? "border-blue-400 bg-blue-50" : "border-gray-200 bg-white"}`}
+      className={`flex-1 border-2 ${isOver ? "border-blue-400 bg-blue-50" : "border-gray-200 bg-white"}`}
     >
       {children}
     </div>

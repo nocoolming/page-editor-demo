@@ -4,7 +4,13 @@ import type { BlockType } from "./types";
 import { blockConfigs } from "./config";
 
 export function PaletteItem({ type }: { type: BlockType }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    isDragging
+  } = useDraggable({
     id: `palette:${type}`,
     data: { paletteType: type },
   });
@@ -14,7 +20,7 @@ export function PaletteItem({ type }: { type: BlockType }) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className={`border p-2 mb-2 bg-white cursor-grab ${isDragging ? "opacity-60" : ""}`}
+      className={`border  mb-2 bg-white cursor-grab ${isDragging ? "opacity-60" : ""}`}
       style={{ transform: transform ? `translate(${transform.x}px, ${transform.y}px)` : undefined }}
     >
       {blockConfigs[type].fields.length ? type : type}
