@@ -1,7 +1,7 @@
 import type { Block } from "./types";
 
 export function uid(prefix = "b") {
-  return `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2,6)}`;
+  return `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 }
 
 // 深拷贝简单实现（演示用）
@@ -62,7 +62,15 @@ export function getById(list: Block[], id: string | null | undefined): Block | n
 }
 
 // 找到父 id 与 索引（parentId null 表示根）
-export function findParentAndIndex(list: Block[], childId: string, parentId: string | null = null): { parentId: string | null; index: number } | null {
+export function findParentAndIndex(
+  list: Block[],
+  childId: string,
+  parentId: string | null = null)
+  : {
+    parentId: string | null;
+    index: number
+  } | null
+   {
   const idx = list.findIndex(b => b.id === childId);
   if (idx !== -1) return { parentId, index: idx };
   for (const b of list) {
