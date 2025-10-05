@@ -17,6 +17,7 @@ import { store } from './store';
 import { DropAreaRoot } from './DropAreaRoot';
 import { EditorBlock } from './EditorBlock';
 import { observer } from 'mobx-react-lite';
+import { Inspector } from './Inspector';
 
 const App = observer(function App() {
     function handleDragEnd(event: DragEndEvent) {
@@ -227,14 +228,9 @@ const App = observer(function App() {
                 </div>
 
                 {/* 右侧： 固定宽度  */}
-
+                            <Inspector/>
             </div>
-            {/* <SortableContext
-                items={items}
-                strategy={verticalListSortingStrategy}
-            >
-                <BlockList blocks={ids} />
-            </SortableContext> */}
+           
         </DndContext >
 
     );

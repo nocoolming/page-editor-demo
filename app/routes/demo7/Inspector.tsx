@@ -3,7 +3,7 @@ import { store } from "./store";
 import { blockConfigs } from "./blogConfigs";
 
 
-const Inspector = observer(() => {
+export const Inspector = observer(() => {
     const node = store.selectedBlock;
     let c = (
         <div className="text-gray-500">
