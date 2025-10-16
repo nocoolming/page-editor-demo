@@ -228,9 +228,9 @@ const App = observer(function App() {
                 </div>
 
                 {/* 右侧： 固定宽度  */}
-                            <Inspector/>
+                <Inspector />
             </div>
-           
+
         </DndContext >
 
     );
