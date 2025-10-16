@@ -196,7 +196,7 @@ const App = observer(function App() {
     }
 
     return (
-        < DndContext
+        <DndContext
             // sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
