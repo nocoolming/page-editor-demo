@@ -73,7 +73,7 @@ function Editor() {
 
                 console.log(active.id);
                 store.init([
-                    id,
+                    id + Date().toString(),
                     ...
                     store.components
                 ])
