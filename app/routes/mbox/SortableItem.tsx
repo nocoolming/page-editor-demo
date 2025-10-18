@@ -1,5 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities";
+import { store } from "./store";
 
 
 export function SortableItem(props) {
@@ -47,7 +48,9 @@ export function SortableItem(props) {
                     // 阻止事件冒泡
                     e.stopPropagation();
                     e.preventDefault();
-                    // console.log('Click me')
+                    console.log('Click me');
+
+                    store.setCurrentId(component.id);
                 }}
             >Click me {component.id}</button>
             {component.render(component.defaultProps)}

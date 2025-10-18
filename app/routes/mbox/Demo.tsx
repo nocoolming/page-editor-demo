@@ -35,6 +35,18 @@ function Editor() {
         })
     );
 
+    // console.log(JSON.stringify(store.currentComponent));
+    let f = <></>
+
+    if (store.currentComponent) {
+        f = (
+            <>
+                <h2>{store.currentComponent.id}</h2>
+                {/* <p>{JSON.stringify(store.currentComponent)}</p> */}
+            </>
+        );
+    }
+
     // console.log(JSON.stringify(store.components));
 
     return (
@@ -67,6 +79,8 @@ function Editor() {
                 <div className="w-96 px-3 py-6 bg-yellow-50">
 
                     <h2>Form</h2>
+
+                    {f}
                 </div>
 
             </div>
@@ -78,7 +92,7 @@ function Editor() {
         const { active, over } = event;
 
         console.log(`active id: ${active.id}, orderId: ${over ? over.id : over}`)
-// debugger;
+        // debugger;
         if (!over) {
             // 空画布
             const blockName = active.id.replace('tools-', '');
@@ -117,7 +131,7 @@ function Editor() {
             defaultProps: {
                 text: 'This is default props.',
             },
-            render: ({text}) => <p>{text}</p>
+            render: ({ text }) => <p>{text}</p>
         }
 
         store.init([
@@ -132,7 +146,7 @@ function Editor() {
     function moveBlock(from: string, to: string) {
         let data = [...store.components];
 
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         const oldIndex = data.findIndex(i => i.id === from);
         const newIndex = data.findIndex(i => i.id === to);
 
@@ -140,7 +154,7 @@ function Editor() {
 
         data = arrayMove(data, oldIndex, newIndex);
 
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         store.init(data);
     }
 
