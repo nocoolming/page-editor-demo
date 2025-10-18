@@ -3,6 +3,9 @@ import { CSS } from "@dnd-kit/utilities";
 
 
 export function SortableItem(props) {
+    const { component } = props;
+
+    console.log(component);
     const {
         attributes,
         listeners,
@@ -10,7 +13,8 @@ export function SortableItem(props) {
         transform,
         transition,
     } = useSortable({
-        id: props.id,
+        id: component.id,
+        category: component.category,
         transition: {
             duration: 150, // milliseconds
             easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
@@ -22,14 +26,15 @@ export function SortableItem(props) {
         transition,
     }
 
+    // debugger;
     return (
-        <li
+        <div
             className="px-6 py-3 border-b-black border-2"
             ref={setNodeRef}
             style={style}
             {...attributes}
             {...listeners}>
-            {props.id}
-        </li>
+            {component.render(component.defaultProps)}
+        </div>
     )
 }

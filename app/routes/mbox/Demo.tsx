@@ -14,12 +14,13 @@ import { SortableItem } from "./SortableItem";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import Draggable from "./Draggable";
+import type { MingComponent } from "./type";
 
 
 function Editor() {
 
     useEffect(() => {
-        const data = ['1', '2', '3'];
+        const data = [];
         store.init(data);
     }, []);
 
@@ -45,19 +46,26 @@ function Editor() {
                         <Draggable id='tools-TextBlock'>TextBlock</Draggable>
                     </ul>
                 </div>
-                <div className="flex justify-center items-center w-full h-screen">
-                    <ol className="flex flex-col gap-3">
+
+                <div className="flex justify-center items-center grow h-screen">
+                    <div className="flex flex-col gap-3">
                         <SortableContext
                             strategy={verticalListSortingStrategy}
                             items={store.components} >
                             {
                                 store.components.map(
-                                    i => <SortableItem key={i} id={i} />
+                                    i => <SortableItem key={i.id} component={{ ...i }} />
                                 )
                             }
                         </SortableContext>
-                    </ol>
+                    </div>
                 </div>
+
+                <div className="w-96 px-3 py-6 bg-yellow-50">
+
+                    <h2>Form</h2>
+                </div>
+
             </div>
 
         </DndContext>
@@ -66,17 +74,22 @@ function Editor() {
     function handleDragEnd(event) {
         const { active, over } = event;
 
+        console.log(`active id: ${active.id}, orderId: ${over ? over.id : over}`)
+
+        if (!over) {
+            // 空画布
+            const blockName = active.id.replace('tools-', '');
+            addBlock(blockName);
+            return;
+        }
+
         if (active.id !== over.id) {
             // 从工具箱拖动block到画布
             if (active.id.startsWith("tools-")) {
-                const id = active.id.replace('tools-', '');
+                const blockName = active.id.replace('tools-', '');
 
-                console.log(active.id);
-                store.init([
-                    id + Date().toString(),
-                    ...
-                    store.components
-                ])
+
+                addBlock(blockName);
                 return;
             }
 
@@ -85,8 +98,35 @@ function Editor() {
         }
     }
 
+    function addBlock(blockName: string) {
+        const id = blockName + new Date().toLocaleTimeString();
+        const component: MingComponent = {
+            id: id,
+            title: blockName,
+            category: blockName,
+            sort: 0,
+            isContainer: false,
+            fields: {
+                text: {
+                    type: 'string'
+                }
+            },
+            defaultProps: {
+                text: 'This is default props.',
+            },
+            render: ({text}) => <p>{text}</p>
+        }
+
+        store.init([
+            component,
+            ...
+            store.components,
+        ]);
+
+
+    }
+
     function moveBlock(from: string, to: string) {
-        console.log(`active id: ${from}, orderId: ${to}`)
         let data = [...store.components];
 
         console.log(data);
