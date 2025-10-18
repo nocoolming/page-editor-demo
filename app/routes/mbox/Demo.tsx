@@ -15,6 +15,7 @@ import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import Draggable from "./Draggable";
 import type { MingComponent } from "./type";
+import { nanoid } from "nanoid";
 
 
 function Editor() {
@@ -33,6 +34,8 @@ function Editor() {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
+
+    // console.log(JSON.stringify(store.components));
 
     return (
         <DndContext
@@ -75,7 +78,7 @@ function Editor() {
         const { active, over } = event;
 
         console.log(`active id: ${active.id}, orderId: ${over ? over.id : over}`)
-
+// debugger;
         if (!over) {
             // 空画布
             const blockName = active.id.replace('tools-', '');
@@ -99,7 +102,7 @@ function Editor() {
     }
 
     function addBlock(blockName: string) {
-        const id = blockName + new Date().toLocaleTimeString();
+        const id = nanoid();
         const component: MingComponent = {
             id: id,
             title: blockName,
@@ -129,15 +132,15 @@ function Editor() {
     function moveBlock(from: string, to: string) {
         let data = [...store.components];
 
-        console.log(data);
-        const oldIndex = data.indexOf(from);
-        const newIndex = data.indexOf(to);
+        console.log(JSON.stringify(data));
+        const oldIndex = data.findIndex(i => i.id === from);
+        const newIndex = data.findIndex(i => i.id === to);
 
         console.log(`old: ${oldIndex}, new: ${newIndex}`)
 
         data = arrayMove(data, oldIndex, newIndex);
 
-        console.log(data);
+        console.log(JSON.stringify(data));
         store.init(data);
     }
 

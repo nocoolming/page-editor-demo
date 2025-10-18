@@ -5,7 +5,7 @@ import { CSS } from "@dnd-kit/utilities";
 export function SortableItem(props) {
     const { component } = props;
 
-    console.log(component);
+    // console.log(JSON.stringify(component));
     const {
         attributes,
         listeners,
@@ -28,12 +28,28 @@ export function SortableItem(props) {
 
     // debugger;
     return (
+
         <div
+
             className="px-6 py-3 border-b-black border-2"
             ref={setNodeRef}
             style={style}
             {...attributes}
-            {...listeners}>
+            {...listeners}
+
+        >
+            <button type='button'
+                onPointerDown={(e) => {
+                    e.stopPropagation(); // 阻止拖拽事件
+                }}
+                onClick={(e) => {
+                    // debugger;
+                    // 阻止事件冒泡
+                    e.stopPropagation();
+                    e.preventDefault();
+                    // console.log('Click me')
+                }}
+            >Click me {component.id}</button>
             {component.render(component.defaultProps)}
         </div>
     )
