@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import type { DefaultProps } from "./config/Props";
 
 
 
@@ -14,7 +15,21 @@ export type MingComponent = {
     render: (props) => JSX.Element;
 }
 
+export type ComponentConfig = {
+    label?: string,
+    fields: { [key: string]: any },
+    render: (props) => JSX.Element,
+    defaultProps: { [key: string]: any }
+}
 
 
+export type Config<
+    Props extends DefaultProps = DefaultProps
+> = {
+    components: {
+        [componentName in keyof Props]
+        : ComponentConfig
+    }
+}
 
 

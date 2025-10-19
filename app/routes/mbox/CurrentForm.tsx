@@ -22,7 +22,9 @@ function CurrentForm() {
                         // console.log(JSON.stringify(o));
 
                         return (
-                            <li className="flex gap-3 px-3 py-2">
+                            <li
+                                key={k}
+                                className="flex gap-3 px-3 py-2">
 
                                 <label>{k}</label>
                                 <input
@@ -49,7 +51,7 @@ function CurrentForm() {
                 onClick={(e) => {
                     e.preventDefault();
                     // debugger;
-                    
+
                     const o = {
                         ...store.currentComponent,
                         props: {

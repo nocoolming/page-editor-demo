@@ -6,7 +6,7 @@ import { store } from "./store";
 export function SortableItem(props) {
     const { component } = props;
 
-    console.log(JSON.stringify(component));
+    // console.log(JSON.stringify(component));
     const {
         attributes,
         listeners,
@@ -55,8 +55,8 @@ export function SortableItem(props) {
                     // 阻止事件冒泡
                     e.stopPropagation();
                     e.preventDefault();
-                    console.log('Click me');
-
+                    // console.log('Click me');
+                    console.log(`current id: ${component.id}`)
                     store.setCurrentId(component.id);
                 }}
             >Click me {component.id}</button>
