@@ -6,7 +6,7 @@ import { store } from "./store";
 export function SortableItem(props) {
     const { component } = props;
 
-    // console.log(JSON.stringify(component));
+    console.log(JSON.stringify(component));
     const {
         attributes,
         listeners,
@@ -25,6 +25,13 @@ export function SortableItem(props) {
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
+    }
+
+    // debugger;
+    let c = component.defaultProps;
+    // console.log(JSON)
+    if(component.props ){
+        c = component.props;
     }
 
     // debugger;
@@ -53,7 +60,8 @@ export function SortableItem(props) {
                     store.setCurrentId(component.id);
                 }}
             >Click me {component.id}</button>
-            {component.render(component.defaultProps)}
+            {component.render(c)}
         </div>
     )
 }
+

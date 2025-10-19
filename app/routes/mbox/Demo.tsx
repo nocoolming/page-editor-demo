@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import Draggable from "./Draggable";
 import type { MingComponent } from "./type";
 import { nanoid } from "nanoid";
+import CurrentForm from "./CurrentForm";
 
 
 function Editor() {
@@ -35,19 +36,6 @@ function Editor() {
         })
     );
 
-    // console.log(JSON.stringify(store.currentComponent));
-    let f = <></>
-
-    if (store.currentComponent) {
-        f = (
-            <>
-                <h2>{store.currentComponent.id}</h2>
-                {/* <p>{JSON.stringify(store.currentComponent)}</p> */}
-            </>
-        );
-    }
-
-    // console.log(JSON.stringify(store.components));
 
     return (
         <DndContext
@@ -80,7 +68,7 @@ function Editor() {
 
                     <h2>Form</h2>
 
-                    {f}
+                    <CurrentForm />
                 </div>
 
             </div>

@@ -8,6 +8,7 @@ export type MingComponent = {
     category: string;
     fields: { [key: string]: any },
     defaultProps: { [key: string]: any },
+    props?: { [key: string]: any },
     sort: number;
     isContainer: boolean;
     render: (props) => JSX.Element;
