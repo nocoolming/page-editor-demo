@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { DefaultProps } from "./config/Props";
+import type { DefaultProps } from "./Props";
 
 
 

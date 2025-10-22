@@ -1,4 +1,4 @@
-import type { Config } from "./type";
+import type { Config } from "./config/type";
 
 export const config: Config = {
     components: {

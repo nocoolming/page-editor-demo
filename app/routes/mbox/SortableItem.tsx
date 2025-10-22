@@ -15,7 +15,7 @@ export function SortableItem(props) {
         transition,
     } = useSortable({
         id: component.id,
-        category: component.category,
+        // category: component.category,
         transition: {
             duration: 150, // milliseconds
             easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
@@ -36,9 +36,7 @@ export function SortableItem(props) {
 
     // debugger;
     return (
-
         <div
-
             className="px-6 py-3 border-b-black border-2"
             ref={setNodeRef}
             style={style}
