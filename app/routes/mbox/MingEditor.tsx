@@ -18,6 +18,7 @@ import type { Config, MingComponent } from "./config/type";
 import { nanoid } from "nanoid";
 import CurrentForm from "./CurrentForm";
 import ComponentList from "./ComponentList";
+import type { ComponentData } from "./config/Data";
 // import { config } from "./config";
 
 
@@ -42,7 +43,7 @@ function MingEditor({ config }: { config: Config }) {
             <div className="flex flex-row gap-3">
                 <div className="px-3 py-2 w-96 bg-blue-800">
                     <h2>Blocks</h2>
-                    
+
                     <ComponentList list={Object.keys(config.components)} />
                 </div>
 
@@ -53,7 +54,7 @@ function MingEditor({ config }: { config: Config }) {
                             items={store.components} >
                             {
                                 store.components.map(
-                                    i => <SortableItem key={i.id} component={{ ...i }} />
+                                    i => <SortableItem key={i.id} component={{ ...i }} config={config} />
                                 )
                             }
                         </SortableContext>
@@ -99,21 +100,31 @@ function MingEditor({ config }: { config: Config }) {
 
     function addBlock(blockName: string) {
         const id = nanoid();
-        const component: MingComponent = {
+        // const component: MingComponent = {
+        //     id: id,
+        //     title: blockName,
+        //     category: blockName,
+        //     sort: 0,
+        //     isContainer: false,
+        //     fields: {
+        //         text: {
+        //             type: 'string'
+        //         }
+        //     },
+        //     defaultProps: {
+        //         text: 'This is default props.',
+        //     },
+        //     render: ({ text }) => <p>{text}</p>
+        // }
+
+        const block = config.components[blockName];
+
+        console.log(JSON.stringify(block));
+
+        const component: ComponentData = {
             id: id,
-            title: blockName,
-            category: blockName,
-            sort: 0,
-            isContainer: false,
-            fields: {
-                text: {
-                    type: 'string'
-                }
-            },
-            defaultProps: {
-                text: 'This is default props.',
-            },
-            render: ({ text }) => <p>{text}</p>
+            type: blockName,
+            props: block.defaultProps,
         }
 
         store.init([

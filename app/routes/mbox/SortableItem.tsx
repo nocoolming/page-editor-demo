@@ -4,9 +4,11 @@ import { store } from "./store";
 
 
 export function SortableItem(props) {
-    const { component } = props;
+    const { component, config } = props;
+    // debugger;
+    const block = config.components[component.type];
 
-    // console.log(JSON.stringify(component));
+    console.log(JSON.stringify(component));
     const {
         attributes,
         listeners,
@@ -27,12 +29,7 @@ export function SortableItem(props) {
         transition,
     }
 
-    // debugger;
-    let c = component.defaultProps;
-    // console.log(JSON)
-    if(component.props ){
-        c = component.props;
-    }
+    // console.log(component.props);
 
     // debugger;
     return (
@@ -58,7 +55,7 @@ export function SortableItem(props) {
                     store.setCurrentId(component.id);
                 }}
             >Click me {component.id}</button>
-            {component.render(c)}
+            {block.render(component.props)}
         </div>
     )
 }

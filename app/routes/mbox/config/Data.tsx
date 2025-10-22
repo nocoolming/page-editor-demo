@@ -9,8 +9,8 @@ export type BaseData<
 
 export type ComponentData = {
   id: string,
-  tyep: string,
-  props: []
+  type: string,
+  props: { [key: string]: any },
 }
 
 export type Data = {

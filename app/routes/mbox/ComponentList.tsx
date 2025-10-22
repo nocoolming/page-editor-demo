@@ -10,7 +10,7 @@ function ComponentList({ list }) {
                 list.map(key => {
 
                     return (
-                        <Draggable id={key}>{key}</Draggable>
+                        <Draggable id={`tools-${key}`}>{key}</Draggable>
                     )
                 })
             }
