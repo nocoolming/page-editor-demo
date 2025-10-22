@@ -47,7 +47,7 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
                     <ComponentList list={Object.keys(config.components)} />
                 </div>
 
-                <div className="flex justify-center items-center grow h-screen">
+                <div className="flex justify-center px-2 grow h-screen">
                     <div className="flex flex-col gap-3 w-full">
                         <SortableContext
                             strategy={verticalListSortingStrategy}

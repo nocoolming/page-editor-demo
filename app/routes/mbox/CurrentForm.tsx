@@ -36,7 +36,7 @@ function CurrentForm({ config }: { config: Config }) {
                                 <label>{k}</label>
                                 <input
                                     key={`${c.id}-${k}`}
-                                    defaultValue={store.currentValues[k]}
+                                    defaultValue={c.props[k]}
                                     onChange={e => {
                                         // console.log(e.target.value);
                                         const v = {

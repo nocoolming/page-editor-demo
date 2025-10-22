@@ -21,7 +21,7 @@ export const config: Config = {
                     type: 'string',
                 }
             },
-            defaultProps: { alt: '', src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ44_CQps08AJLJSkRCRR2R7fDRQNIIxOZtUw&s' },
+            defaultProps: { alt: 'test', src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ44_CQps08AJLJSkRCRR2R7fDRQNIIxOZtUw&s' },
             render: ({ alt, src }) => <img src={src} alt={alt} />
         },
         Container: {
