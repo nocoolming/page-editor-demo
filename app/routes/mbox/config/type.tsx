@@ -19,7 +19,7 @@ export type ComponentConfig = {
     label?: string,
     fields: { [key: string]: any },
     render: (props) => JSX.Element,
-    defaultProps: { [key: string]: any }
+    defaultProps?: { [key: string]: any }
 }
 
 

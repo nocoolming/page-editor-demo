@@ -1,13 +1,20 @@
 import { observer } from "mobx-react-lite"
 import { store } from "./store";
 import { useState } from "react";
+import type { Config } from "./config/type";
 
-function CurrentForm() {
+function CurrentForm({ config }: { config: Config }) {
     let c = store.currentComponent;
 
-    if (!c || !c.fields) {
+    console.log('this is current form');
+    console.log(JSON.stringify(c));
+    if (!c || !c.props) {
         return <></>
     }
+
+    
+
+    const component = config.components[c.type];
 
     return (
         <>
@@ -16,8 +23,8 @@ function CurrentForm() {
 
             <ol className="flex flex-col gap-3">
                 {
-                    Object.keys(c.fields).map(k => {
-                        const o = c.fields[k];
+                    Object.keys(component.fields).map(k => {
+                        const o = component.fields[k];
 
                         // console.log(JSON.stringify(o));
 

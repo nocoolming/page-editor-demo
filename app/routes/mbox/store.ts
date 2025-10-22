@@ -20,7 +20,7 @@ export class EditorStore {
         this.currentId = id;
 
         const o = this.components.filter(i => i.id === id);
-
+        // debugger;
         if (o && o.length === 1) {
             this.setCurrent(o[0]);
             this.currentValues = {};
@@ -37,8 +37,15 @@ export class EditorStore {
         this.currentValues = v;
     }
 
+    // setCurrentProps(k, v) {
+    //     this.currentProps = {
+    //         ...this.currentProps,
+    //         k: v
+    //     }
+    // }
+
     saveComponent(o) {
-       this.update(o);
+        this.update(o);
     }
 
     update(o) {

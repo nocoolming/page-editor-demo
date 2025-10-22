@@ -18,11 +18,11 @@ import type { Config, MingComponent } from "./config/type";
 import { nanoid } from "nanoid";
 import CurrentForm from "./CurrentForm";
 import ComponentList from "./ComponentList";
-import type { ComponentData } from "./config/Data";
+import type { ComponentData, Data } from "./config/Data";
 // import { config } from "./config";
 
 
-function MingEditor({ config }: { config: Config }) {
+function MingEditor({ config, data }: { config: Config, data: Data }) {
     useEffect(() => {
         const data = [];
         store.init(data);
@@ -48,7 +48,7 @@ function MingEditor({ config }: { config: Config }) {
                 </div>
 
                 <div className="flex justify-center items-center grow h-screen">
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 w-full">
                         <SortableContext
                             strategy={verticalListSortingStrategy}
                             items={store.components} >
@@ -64,7 +64,7 @@ function MingEditor({ config }: { config: Config }) {
                 <div className="w-96 px-3 py-6 bg-yellow-50">
                     <h2>Form</h2>
 
-                    <CurrentForm />
+                    <CurrentForm config={config} />
                 </div>
 
             </div>
@@ -100,26 +100,10 @@ function MingEditor({ config }: { config: Config }) {
 
     function addBlock(blockName: string) {
         const id = nanoid();
-        // const component: MingComponent = {
-        //     id: id,
-        //     title: blockName,
-        //     category: blockName,
-        //     sort: 0,
-        //     isContainer: false,
-        //     fields: {
-        //         text: {
-        //             type: 'string'
-        //         }
-        //     },
-        //     defaultProps: {
-        //         text: 'This is default props.',
-        //     },
-        //     render: ({ text }) => <p>{text}</p>
-        // }
 
         const block = config.components[blockName];
 
-        console.log(JSON.stringify(block));
+        // console.log(JSON.stringify(block));
 
         const component: ComponentData = {
             id: id,

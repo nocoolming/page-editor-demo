@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import type { Config } from "./config/type";
 
 export const config: Config = {
@@ -22,6 +23,19 @@ export const config: Config = {
             },
             defaultProps: { alt: '', src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ44_CQps08AJLJSkRCRR2R7fDRQNIIxOZtUw&s' },
             render: ({ alt, src }) => <img src={src} alt={alt} />
+        },
+        Container: {
+            fields: {
+                children: {
+                    type: 'container',
+                }
+            },
+            defaultProps: {
+                children: [
+                    {"id":"xt6XEe2OREa6E8_iGrrSI",
+                        "type": nanoid(),"props":{"value":"This is test in container"}}],
+            },
+            render: ({ children }) => <>{children}</>
         }
     }
-}
+}                   

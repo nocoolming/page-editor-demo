@@ -6,9 +6,9 @@ import { store } from "./store";
 export function SortableItem(props) {
     const { component, config } = props;
     // debugger;
-    const block = config.components[component.type];
+    const componentConfig = config.components[component.type];
 
-    console.log(JSON.stringify(component));
+    // console.log(JSON.stringify(component));
     const {
         attributes,
         listeners,
@@ -29,7 +29,8 @@ export function SortableItem(props) {
         transition,
     }
 
-    // console.log(component.props);
+
+    const processedProps = renderComponent(component);
 
     // debugger;
     return (
@@ -51,12 +52,35 @@ export function SortableItem(props) {
                     e.stopPropagation();
                     e.preventDefault();
                     // console.log('Click me');
-                    console.log(`current id: ${component.id}`)
+                    // console.log(`current id: ${component.id}`)
                     store.setCurrentId(component.id);
                 }}
             >Click me {component.id}</button>
-            {block.render(component.props)}
+            {componentConfig.render(processedProps)}
         </div>
     )
+
+
+    function renderComponent(componentData) {
+        const componentConfig = config.components[componentData.type]
+        // debugger;
+        const processedProps = {};
+
+        Object.keys(componentConfig.fields).forEach(
+            fieldName => {
+                const field = componentConfig.fields[fieldName];
+
+                if (field.type === 'container') {
+                    processedProps[fieldName] = component[fieldName]?.map(childData =>
+                        renderComponent(childData))
+                        || [];
+                } else {
+                    processedProps[fieldName] = componentData.props[fieldName];
+                }
+            }
+        );
+
+        return processedProps;
+    }
 }
 
