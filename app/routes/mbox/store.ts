@@ -57,7 +57,7 @@ export class EditorStore {
         const index = data.findIndex(i => i.id === o.id);
 
         data.splice(index, 1);
-        data.push(o);
+        data.splice(index, 0, o);
 
         this.components = data;
     }
