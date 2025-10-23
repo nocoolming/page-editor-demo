@@ -1,6 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities";
-import { store } from "./store";
+import { store } from "../store";
+import { ProcessRender } from "./ProcessRender";
 
 
 export function SortableItem(props) {
@@ -8,6 +9,7 @@ export function SortableItem(props) {
     // debugger;
     const componentConfig = config.components[component.type];
 
+    console.log(`type: ${component.type}`)
     // console.log(JSON.stringify(component));
     const {
         attributes,
@@ -55,8 +57,9 @@ export function SortableItem(props) {
                     // console.log(`current id: ${component.id}`)
                     store.setCurrentId(component.id);
                 }}
-            >Click me {component.id}</button>
-            {componentConfig.render(processedProps)}
+            >Select it </button>
+            <ProcessRender component={component} componentProps={processedProps} config={config} />
+            {/* {componentConfig.render(processedProps)} */}
         </div>
     )
 
@@ -71,9 +74,16 @@ export function SortableItem(props) {
                 const field = componentConfig.fields[fieldName];
 
                 if (field.type === 'container') {
-                    processedProps[fieldName] = component[fieldName]?.map(childData =>
-                        renderComponent(childData))
-                        || [];
+                    const f = component.props[fieldName];
+
+
+
+                    const tempProps = f?.map(childData => {
+
+                        // debugger;
+                        return renderComponent(childData)
+                    });
+                    processedProps[fieldName] = tempProps || [];
                 } else {
                     processedProps[fieldName] = componentData.props[fieldName];
                 }

@@ -10,7 +10,7 @@ import {
 } from "@dnd-kit/core";
 import { store } from "./store";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { SortableItem } from "./SortableItem";
+import { SortableItem } from "./render/SortableItem";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import Draggable from "./Draggable";
@@ -20,7 +20,6 @@ import CurrentForm from "./CurrentForm";
 import ComponentList from "./ComponentList";
 import type { ComponentData, Data } from "./config/Data";
 // import { config } from "./config";
-
 
 function MingEditor({ config, data }: { config: Config, data: Data }) {
     useEffect(() => {
@@ -66,7 +65,6 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
 
                     <CurrentForm config={config} />
                 </div>
-
             </div>
 
         </DndContext>
@@ -118,6 +116,14 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
         ]);
     }
 
+    function insertNewComponentToCotainer() {
+
+    }
+
+    function moveingComponentToContainer(){
+
+    }
+
     function moveBlock(from: string, to: string) {
         let data = [...store.components];
 
@@ -132,6 +138,8 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
         // console.log(JSON.stringify(data));
         store.init(data);
     }
+
+
 
 }
 

@@ -32,8 +32,13 @@ export const config: Config = {
             },
             defaultProps: {
                 children: [
-                    {"id":"xt6XEe2OREa6E8_iGrrSI",
-                        "type": nanoid(),"props":{"value":"This is test in container"}}],
+                    {
+                        id: nanoid(),
+                        type: 'Heading',
+                        props: {
+                            value: "This is test in container"
+                        },
+                    }],
             },
             render: ({ children }) => <>{children}</>
         }

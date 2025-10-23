@@ -6,13 +6,11 @@ import type { Config } from "./config/type";
 function CurrentForm({ config }: { config: Config }) {
     let c = store.currentComponent;
 
-    console.log('this is current form');
+    // console.log('this is current form');
     console.log(JSON.stringify(c));
     if (!c || !c.props) {
         return <></>
     }
-
-    
 
     const component = config.components[c.type];
 
