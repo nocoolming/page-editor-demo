@@ -24,6 +24,9 @@ function CurrentForm({ config }: { config: Config }) {
                     Object.keys(component.fields).map(k => {
                         const o = component.fields[k];
 
+                        if(k === 'children'){
+                            return <></>;
+                        }
                         // console.log(JSON.stringify(o));
 
                         return (

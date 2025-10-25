@@ -42,22 +42,20 @@ export function SortableItem(props) {
             style={style}
             {...attributes}
             {...listeners}
-
+            onPointerDown={(e) => {
+                e.stopPropagation(); // 阻止拖拽事件
+            }}
+            onClick={(e) => {
+                // debugger;
+                // 阻止事件冒泡
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('Click me' + component.id + component.type);
+                // console.log(`current id: ${component.id}`)
+                store.setCurrent(component);
+            }}
         >
-            <button type='button'
-                onPointerDown={(e) => {
-                    e.stopPropagation(); // 阻止拖拽事件
-                }}
-                onClick={(e) => {
-                    // debugger;
-                    // 阻止事件冒泡
-                    e.stopPropagation();
-                    e.preventDefault();
-                    console.log('Click me' + component.id + component.type);
-                    // console.log(`current id: ${component.id}`)
-                    store.setCurrent(component);
-                }}
-            >Select it </button>
+            
             <ProcessRender component={component} componentProps={processedProps} config={config} />
             {/* {componentConfig.render(processedProps)} */}
         </div>
@@ -65,7 +63,7 @@ export function SortableItem(props) {
 
 
     function renderComponent(componentData, depth = 0) {
-        if(depth>=10){
+        if (depth >= 10) {
             return componentData;
         }
 
