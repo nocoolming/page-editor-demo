@@ -22,7 +22,7 @@ export class EditorStore {
     setCurrentId(id: string) {
         this.currentId = id;
 
-        const o = this.components.filter(i => i.id === id);
+        const o = this.findComponent(this.components, id);
         // debugger;
         if (o && o.length === 1) {
             this.setCurrent(o[0]);
@@ -49,6 +49,32 @@ export class EditorStore {
 
     saveComponent(o) {
         this.update(o);
+    }
+    saveComponentInAllLayoutData(data: ComponentData[], o) {
+        if (!data || data.length === 0) {
+            return;
+        }
+
+        const d = [...data];
+        const copy = d.map(
+            i => {
+                if (i.id === o.id) {
+                    const index = d.findIndex(j => j.id === o.id);
+                    // debugger;
+                    d.splice(index, 1)
+                    d.splice(index, 0, { ...o })
+                    return o;
+                } else {
+                    i.props.children = this.saveComponentInAllLayoutData(i.props.children, o);
+
+                    return i;
+                }
+            }
+        )
+
+        console.log(`copy === d ${(copy.length)}, ${JSON.stringify(copy)}`)
+
+        return copy;
     }
 
     getNewComponentDataInstance(type: string, config) {

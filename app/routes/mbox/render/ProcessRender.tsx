@@ -9,14 +9,19 @@ export function ProcessRender({ component, componentProps, config }) {
             <div className="h-full">
                 {
                     component.props?.children?.map(
-                        c => (
-                            <SortableItem
-                                key={c.id}
-                                component={c}
-                                componentProps={c.props}
-                                config={config}
-                            />
-                        )
+                        c => {
+                            if(!c){
+                                return <p>c is null</p>
+                            }
+                            return (
+                                <SortableItem
+                                    key={c.id}
+                                    component={c}
+                                    componentProps={c.props}
+                                    config={config}
+                                />
+                            )
+                        }
                     )
                 }
             </div>

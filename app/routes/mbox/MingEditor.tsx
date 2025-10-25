@@ -51,11 +51,13 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
                         <SortableContext
                             strategy={verticalListSortingStrategy}
                             items={store.components} >
-                            {
-                                store.components.map(
-                                    i => <SortableItem key={i.id} component={{ ...i }} config={config} />
-                                )
-                            }
+                            <div id='root'>
+                                {
+                                    store.components.map(
+                                        i => <SortableItem key={i.id} component={{ ...i }} config={config} />
+                                    )
+                                }
+                            </div>
                         </SortableContext>
                     </div>
                 </div>

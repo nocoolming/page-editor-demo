@@ -53,9 +53,9 @@ export function SortableItem(props) {
                     // 阻止事件冒泡
                     e.stopPropagation();
                     e.preventDefault();
-                    // console.log('Click me');
+                    console.log('Click me' + component.id + component.type);
                     // console.log(`current id: ${component.id}`)
-                    store.setCurrentId(component.id);
+                    store.setCurrent(component);
                 }}
             >Select it </button>
             <ProcessRender component={component} componentProps={processedProps} config={config} />

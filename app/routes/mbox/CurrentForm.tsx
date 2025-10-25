@@ -65,7 +65,10 @@ function CurrentForm({ config }: { config: Config }) {
                         },
                     }
 
-                    store.update(o);
+                    // store.update(o);
+                    const d = store.saveComponentInAllLayoutData(store.components, o);
+                    console.log(JSON.stringify(d));
+                    store.init(d);
                     store.setCurrent(o);
                 }}
             >Save</button>
