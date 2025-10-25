@@ -9,7 +9,7 @@ export function SortableItem(props) {
     // debugger;
     const componentConfig = config.components[component.type];
 
-    console.log(`type: ${component.type}`)
+    // console.log(`type: ${component.type}`)
     // console.log(JSON.stringify(component));
     const {
         attributes,
@@ -37,7 +37,7 @@ export function SortableItem(props) {
     // debugger;
     return (
         <div
-            className="px-6 py-3 border-b-black border-2"
+            className="px-6 py-3 my-2 border-b-black border-2"
             ref={setNodeRef}
             style={style}
             {...attributes}
@@ -64,7 +64,11 @@ export function SortableItem(props) {
     )
 
 
-    function renderComponent(componentData) {
+    function renderComponent(componentData, depth = 0) {
+        if(depth>=10){
+            return componentData;
+        }
+
         const componentConfig = config.components[componentData.type]
         // debugger;
         const processedProps = {};
@@ -73,15 +77,18 @@ export function SortableItem(props) {
             fieldName => {
                 const field = componentConfig.fields[fieldName];
 
-                if (field.type === 'container') {
+                if (field.type === 'Container') {
+                    // debugger
                     const f = component.props[fieldName];
 
 
 
                     const tempProps = f?.map(childData => {
-
+                        if (!childData || childData.length === 0) {
+                            return {};
+                        }
                         // debugger;
-                        return renderComponent(childData)
+                        return renderComponent(childData, depth++)
                     });
                     processedProps[fieldName] = tempProps || [];
                 } else {

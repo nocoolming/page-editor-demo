@@ -27,18 +27,19 @@ export const config: Config = {
         Container: {
             fields: {
                 children: {
-                    type: 'container',
+                    type: 'Container',
                 }
             },
             defaultProps: {
                 children: [
-                    {
-                        id: nanoid(),
-                        type: 'Heading',
-                        props: {
-                            value: "This is test in container"
-                        },
-                    }],
+                    // {
+                    //     id: nanoid(),
+                    //     type: 'Heading',
+                    //     props: {
+                    //         value: "This is test in container"
+                    //     },
+                    // }
+                ],
             },
             render: ({ children }) => <>{children}</>
         }

@@ -8,9 +8,12 @@ function ComponentList({ list }) {
         <ul>
             {
                 list.map(key => {
+                    const id: string = `tools-${key}`;
 
                     return (
-                        <Draggable id={`tools-${key}`}>{key}</Draggable>
+                        <Draggable id={id} key={key}>
+                            {key}
+                        </Draggable>
                     )
                 })
             }

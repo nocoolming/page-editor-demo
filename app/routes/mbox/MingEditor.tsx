@@ -73,71 +73,66 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
     function handleDragEnd(event) {
         const { active, over } = event;
 
-        console.log(`active id: ${active.id}, orderId: ${over ? over.id : over}`)
+        console.log(`active id: ${active.id}, overId: ${over ? over.id : over}`)
         // debugger;
         if (!over) {
             // 空画布
             const blockName = active.id.replace('tools-', '');
-            addBlock(blockName);
+            store.addBlock(blockName, config);
             return;
         }
 
         if (active.id !== over.id) {
+
+            const overComponent = store.findComponent(store.components, over.id);
+            console.log(JSON.stringify(overComponent));
+
+            // const overComponent = 
             // 从工具箱拖动block到画布
             if (active.id.startsWith("tools-")) {
                 const blockName = active.id.replace('tools-', '');
 
-                addBlock(blockName);
+                // 直接放入container
+                if (overComponent.type === 'Container') {
+
+                    store.addNewBlockToContainer(blockName, over.id, config);
+                    return;
+
+                }
+                store.addBlock(blockName, config);
+
+
+                return;
+            }
+
+            // 这里是画面已经有的componentData instance 移动的场景
+
+            // 放入container
+            if (overComponent.type === 'Container') {
+                store.removeBlockToContainer(active.id, over.id, config);
+
                 return;
             }
 
             // 移动block位置 
-            moveBlock(active.id, over.id);
+            store.moveBlock(active.id, over.id);
         }
     }
 
-    function addBlock(blockName: string) {
-        const id = nanoid();
 
-        const block = config.components[blockName];
 
-        // console.log(JSON.stringify(block));
 
-        const component: ComponentData = {
-            id: id,
-            type: blockName,
-            props: block.defaultProps,
-        }
 
-        store.init([
-            component,
-            ...
-            store.components,
-        ]);
-    }
-
-    function insertNewComponentToCotainer() {
+    function insertNewComponentToCotainer(activeId: string, overComponet: ComponentData) {
+        // const
 
     }
 
-    function moveingComponentToContainer(){
+    function moveingComponentToContainer() {
 
     }
 
-    function moveBlock(from: string, to: string) {
-        let data = [...store.components];
 
-        // console.log(JSON.stringify(data));
-        const oldIndex = data.findIndex(i => i.id === from);
-        const newIndex = data.findIndex(i => i.id === to);
-
-        console.log(`old: ${oldIndex}, new: ${newIndex}`)
-
-        data = arrayMove(data, oldIndex, newIndex);
-
-        // console.log(JSON.stringify(data));
-        store.init(data);
-    }
 
 
 

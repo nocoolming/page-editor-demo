@@ -1,3 +1,4 @@
+import { SortableItem } from "./SortableItem";
 
 
 export function ProcessRender({ component, componentProps, config }) {
@@ -5,17 +6,16 @@ export function ProcessRender({ component, componentProps, config }) {
     const componentConfig = config.components[component.type];
     if (component.type === 'Container') {
         return (
-            <div>
+            <div className="h-full">
                 {
                     component.props?.children?.map(
                         c => (
-                            <>
-                                <ProcessRender
-                                    component={c}
-                                    componentProps={c.props}
-                                    config={config}
-                                />
-                            </>
+                            <SortableItem
+                                key={c.id}
+                                component={c}
+                                componentProps={c.props}
+                                config={config}
+                            />
                         )
                     )
                 }
