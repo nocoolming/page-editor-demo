@@ -31,6 +31,7 @@ export class EditorStore {
 
     setCurrent(o) {
         this.currentComponent = o;
+        this.setCurrentValues(o.props);
     }
 
     setCurrentValues(v) {
@@ -94,32 +95,52 @@ export class EditorStore {
         return { component: removedComponent, newData };
     }
 
+    /**
+ * 数组索引插入辅助方法
+ */
+    private insertAtIndex(
+        array: ComponentData[],
+        component: ComponentData,
+        index: number
+    ): ComponentData[] {
+        const newArray = [...array];
+
+        // -1 特殊处理表示末尾，其他直接用 splice
+        if (index === -1) {
+            newArray.push(component);
+        } else {
+            newArray.splice(index, 0, component);
+        }
+
+        return newArray;
+    }
     addComponentToContainer(
         data: ComponentData[],
         containerId: string,
-        componentToAdd: ComponentData
+        componentToAdd: ComponentData,
+        index: number = -1
     ): ComponentData[] {
-        console.log(`container id: ${containerId}`)
+        // console.log(`container id: ${containerId}`)
         if (
             !containerId ||
             containerId === 'root'
         ) {
-            return [...data, componentToAdd]
+            return this.insertAtIndex(data, componentToAdd, index);
         }
 
         return data.map(item => {
             if (item.id === containerId) {
                 // 找到目标容器
+                const currentChildren = item.props.children || [];
+                const newChildren = this.insertAtIndex(currentChildren, componentToAdd, index);
+
                 return {
                     ...item,
                     props: {
                         ...item.props,
-                        children: [
-                            ...(item.props.children || [])
-                            , componentToAdd
-                        ]
+                        children: newChildren
                     }
-                }
+                };
             } if (item.props?.children) {
                 // 递归处理children
                 return {
@@ -173,18 +194,49 @@ export class EditorStore {
 
     }
 
-    update(o) {
+    update(
+        data: ComponentData[],
+        o: ComponentData): ComponentData[] {
         if (!o) {
             return;
         }
 
-        const data = [...this.components];
-        const index = data.findIndex(i => i.id === o.id);
+        const d: ComponentData[] = [...data];
 
-        data.splice(index, 1);
-        data.splice(index, 0, o);
+        const result: ComponentData[] = d.map(
+            i => {
+                // debugger;
 
-        this.components = data;
+                if (i.id === o.id) {
+                    return {
+                        ...o,
+                        props: {
+                            ...o.props
+                        }
+                    }
+                } else {
+                    if (i.type !== 'Container') {
+                        return i;
+                    }
+
+
+                    const newChildren: ComponentData[]
+                        = this.update(i.props.children, o);
+
+                    console.log(JSON.stringify(newChildren));
+
+                    return {
+                        ...i,
+                        props: {
+                            ...i.props,
+                            children: newChildren,
+                        }
+                    }
+                }
+            }
+        )
+
+        return result;
     }
 
     findComponent(source: ComponentData[], id: string) {

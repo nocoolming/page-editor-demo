@@ -53,7 +53,7 @@ export function SortableItem(props) {
                     // 阻止事件冒泡
                     e.stopPropagation();
                     e.preventDefault();
-                    console.log('Click me' + component.id + component.type);
+                    // console.log('Click me' + component.id + component.type);
                     // console.log(`current id: ${component.id}`)
                     store.setCurrent(component);
                 }}>

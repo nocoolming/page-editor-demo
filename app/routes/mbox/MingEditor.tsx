@@ -121,42 +121,7 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
 
         }
 
-        // if (active.id !== over.id) {
-
-        //     const overComponent = store.findComponent(store.components, over.id);
-        //     console.log(JSON.stringify(overComponent));
-
-        //     // const overComponent = 
-        //     // 从工具箱拖动block到画布
-        //     if (active.id.startsWith("tools-")) {
-        //         const blockName = active.id.replace('tools-', '');
-
-        //         // 直接放入container
-        //         if (overComponent.type === 'Container') {
-
-        //             store.addNewBlockToContainer(blockName, over.id, config);
-        //             return;
-
-        //         }
-        //         store.addBlock(blockName, config);
-
-
-        //         return;
-        //     }
-
-        //     // 这里是画面已经有的componentData instance 移动的场景
-
-        //     // 放入container
-        //     if (overComponent.type === 'Container') {
-        //         store.removeBlockToContainer(active.id, over.id, config);
-
-        //         return;
-        //     }
-
-        //     // 移动block位置 这里没有向Container移动的场景，上方已经拦截了。
-        //     // 这里是根元素移动和container中components往根移动
-        //     store.moveBlock(active.id, over.id);
-        // }
+       
     }
 }
 
