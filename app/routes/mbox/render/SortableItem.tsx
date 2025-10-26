@@ -7,7 +7,7 @@ import { ProcessRender } from "./ProcessRender";
 export function SortableItem(props) {
     const { component, config } = props;
     // debugger;
-    const componentConfig = config.components[component.type];
+    // const componentConfig = config.components[component.type];
 
     // console.log(`type: ${component.type}`)
     // console.log(JSON.stringify(component));
@@ -42,22 +42,26 @@ export function SortableItem(props) {
             style={style}
             {...attributes}
             {...listeners}
-            onPointerDown={(e) => {
-                e.stopPropagation(); // 阻止拖拽事件
-            }}
-            onClick={(e) => {
-                // debugger;
-                // 阻止事件冒泡
-                e.stopPropagation();
-                e.preventDefault();
-                console.log('Click me' + component.id + component.type);
-                // console.log(`current id: ${component.id}`)
-                store.setCurrent(component);
-            }}
+
         >
-            
-            <ProcessRender component={component} componentProps={processedProps} config={config} />
-            {/* {componentConfig.render(processedProps)} */}
+            <div
+                onPointerDown={(e) => {
+                    e.stopPropagation(); // 阻止拖拽事件
+                }}
+                onClick={(e) => {
+                    // debugger;
+                    // 阻止事件冒泡
+                    e.stopPropagation();
+                    e.preventDefault();
+                    console.log('Click me' + component.id + component.type);
+                    // console.log(`current id: ${component.id}`)
+                    store.setCurrent(component);
+                }}>
+
+                <ProcessRender component={component} componentProps={processedProps} config={config} />
+
+
+            </div>
         </div>
     )
 

@@ -2,24 +2,19 @@ import {
     closestCenter,
     DndContext,
     KeyboardSensor,
-    MouseSensor,
     PointerSensor,
-    TouchSensor,
     useSensor,
     useSensors
 } from "@dnd-kit/core";
 import { store } from "./store";
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableItem } from "./render/SortableItem";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import Draggable from "./Draggable";
-import type { Config, MingComponent } from "./config/type";
-import { nanoid } from "nanoid";
+import type { Config } from "./config/type";
 import CurrentForm from "./CurrentForm";
 import ComponentList from "./ComponentList";
-import type { ComponentData, Data } from "./config/Data";
-// import { config } from "./config";
+import type { Data } from "./config/Data";
 
 function MingEditor({ config, data }: { config: Config, data: Data }) {
     useEffect(() => {
@@ -76,68 +71,93 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
         const { active, over } = event;
 
         console.log(`active id: ${active.id}, overId: ${over ? over.id : over}`)
+        const blockName = active.id.replace('tools-', '');
         // debugger;
         if (!over) {
             // 空画布
-            const blockName = active.id.replace('tools-', '');
-            store.addBlock(blockName, config);
+
+            const c = store.getNewComponentDataInstance(blockName, config);
+            const result = store.addComponentToContainer(
+                store.components,
+                'root',
+                c,
+            );
+
+            store.init(result);
+            // store.addBlock(blockName, config);
             return;
         }
 
         if (active.id !== over.id) {
+            const targetComponent
+                = store.findComponent(
+                    store.components, over.id
+                );
 
-            const overComponent = store.findComponent(store.components, over.id);
-            console.log(JSON.stringify(overComponent));
+            let to: string = over.id;
 
-            // const overComponent = 
-            // 从工具箱拖动block到画布
-            if (active.id.startsWith("tools-")) {
-                const blockName = active.id.replace('tools-', '');
+            if (targetComponent.type !== 'Container') {
+                to = 'root';
+            }
 
-                // 直接放入container
-                if (overComponent.type === 'Container') {
+            if (active.id.startsWith('tools-')) {
+                // debugger;
 
-                    store.addNewBlockToContainer(blockName, over.id, config);
-                    return;
+                const c = store.getNewComponentDataInstance(blockName, config);
+                const newData = store.addComponentToContainer(
+                    store.components,
+                    to,
+                    c,
+                );
 
-                }
-                store.addBlock(blockName, config);
-
+                store.init(newData);
 
                 return;
             }
 
-            // 这里是画面已经有的componentData instance 移动的场景
 
-            // 放入container
-            if (overComponent.type === 'Container') {
-                store.removeBlockToContainer(active.id, over.id, config);
 
-                return;
-            }
+            store.moveComponentUniversal(active.id, to);
 
-            // 移动block位置 
-            store.moveBlock(active.id, over.id);
         }
+
+        // if (active.id !== over.id) {
+
+        //     const overComponent = store.findComponent(store.components, over.id);
+        //     console.log(JSON.stringify(overComponent));
+
+        //     // const overComponent = 
+        //     // 从工具箱拖动block到画布
+        //     if (active.id.startsWith("tools-")) {
+        //         const blockName = active.id.replace('tools-', '');
+
+        //         // 直接放入container
+        //         if (overComponent.type === 'Container') {
+
+        //             store.addNewBlockToContainer(blockName, over.id, config);
+        //             return;
+
+        //         }
+        //         store.addBlock(blockName, config);
+
+
+        //         return;
+        //     }
+
+        //     // 这里是画面已经有的componentData instance 移动的场景
+
+        //     // 放入container
+        //     if (overComponent.type === 'Container') {
+        //         store.removeBlockToContainer(active.id, over.id, config);
+
+        //         return;
+        //     }
+
+        //     // 移动block位置 这里没有向Container移动的场景，上方已经拦截了。
+        //     // 这里是根元素移动和container中components往根移动
+        //     store.moveBlock(active.id, over.id);
+        // }
     }
-
-
-
-
-
-    function insertNewComponentToCotainer(activeId: string, overComponet: ComponentData) {
-        // const
-
-    }
-
-    function moveingComponentToContainer() {
-
-    }
-
-
-
-
-
 }
 
 export default observer(MingEditor)

@@ -17,14 +17,15 @@ function CurrentForm({ config }: { config: Config }) {
     return (
         <>
             {/* <p>{JSON.stringify(store.currentValues)}</p>
-            <p>{JSON.stringify(store.currentComponent)}</p> */}
+            */}
+            {/* <p>{JSON.stringify(store.currentComponent)}</p> */}
 
             <ol className="flex flex-col gap-3">
                 {
                     Object.keys(component.fields).map(k => {
                         const o = component.fields[k];
 
-                        if(k === 'children'){
+                        if (k === 'children') {
                             return <></>;
                         }
                         // console.log(JSON.stringify(o));

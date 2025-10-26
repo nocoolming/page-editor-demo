@@ -1,7 +1,9 @@
+import { store } from "../store";
 import { SortableItem } from "./SortableItem";
 
 
 export function ProcessRender({ component, componentProps, config }) {
+    // console.log(JSON.stringify(component));
 
     const componentConfig = config.components[component.type];
     if (component.type === 'Container') {
@@ -10,9 +12,6 @@ export function ProcessRender({ component, componentProps, config }) {
                 {
                     component.props?.children?.map(
                         c => {
-                            if(!c){
-                                return <p>c is null</p>
-                            }
                             return (
                                 <SortableItem
                                     key={c.id}

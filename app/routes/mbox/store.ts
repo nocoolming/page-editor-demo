@@ -1,9 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import type { ComponentData } from "./config/Data";
 import { nanoid } from "nanoid";
-import { arrayMove } from "@dnd-kit/sortable";
-
-
 
 export class EditorStore {
     components = [];
@@ -50,32 +47,116 @@ export class EditorStore {
     saveComponent(o) {
         this.update(o);
     }
-    saveComponentInAllLayoutData(data: ComponentData[], o) {
+
+
+    removeComponentFromTree(data: ComponentData[], id: string)
+        : {
+            component: ComponentData | null,
+            newData: ComponentData[]
+        } {
         if (!data || data.length === 0) {
+            return {
+                component: null,
+                newData: []
+            }
+        }
+
+
+        const newData: ComponentData[] = [];
+        let removedComponent: ComponentData | null = null;
+
+        for (const item of data) {
+            if (item.id === id) {
+                removedComponent = item;
+            } else {
+                const newItem = { ...item };
+
+                if (item.props?.children && Array.isArray(item.props.children)) {
+                    // 递归处理children
+                    const childResult = this.removeComponentFromTree(item.props.children, id);
+
+                    // 更新children为处理后的结果
+                    newItem.props = {
+                        ...item.props,
+                        children: childResult.newData,
+                    };
+
+                    // 如果在children中找到了目标组件，记录它
+                    if (childResult.component) {
+                        removedComponent = childResult.component;
+                    }
+                }
+
+                newData.push(newItem);
+            }
+        }
+
+        return { component: removedComponent, newData };
+    }
+
+    addComponentToContainer(
+        data: ComponentData[],
+        containerId: string,
+        componentToAdd: ComponentData
+    ): ComponentData[] {
+        console.log(`container id: ${containerId}`)
+        if (
+            !containerId ||
+            containerId === 'root'
+        ) {
+            return [...data, componentToAdd]
+        }
+
+        return data.map(item => {
+            if (item.id === containerId) {
+                // 找到目标容器
+                return {
+                    ...item,
+                    props: {
+                        ...item.props,
+                        children: [
+                            ...(item.props.children || [])
+                            , componentToAdd
+                        ]
+                    }
+                }
+            } if (item.props?.children) {
+                // 递归处理children
+                return {
+                    ...item,
+                    props: {
+                        ...item.props,
+                        children: this.addComponentToContainer(
+                            item.props.children,
+                            containerId,
+                            componentToAdd,
+                        )
+                    }
+                }
+            }
+
+            return item;
+        })
+
+    }
+
+    moveComponentUniversal(fromId: string, to: string) {
+        // 1. 移除组件
+        const removeResult = this.removeComponentFromTree(this.components, fromId);
+
+        if (!removeResult.component) {
             return;
         }
 
-        const d = [...data];
-        const copy = d.map(
-            i => {
-                if (i.id === o.id) {
-                    const index = d.findIndex(j => j.id === o.id);
-                    // debugger;
-                    d.splice(index, 1)
-                    d.splice(index, 0, { ...o })
-                    return o;
-                } else {
-                    i.props.children = this.saveComponentInAllLayoutData(i.props.children, o);
+        const newData = this.addComponentToContainer(
+            removeResult.newData,
+            to,
+            removeResult.component,
+        );
 
-                    return i;
-                }
-            }
-        )
-
-        console.log(`copy === d ${(copy.length)}, ${JSON.stringify(copy)}`)
-
-        return copy;
+        this.components = newData;
     }
+
 
     getNewComponentDataInstance(type: string, config) {
         const id: string = nanoid();
@@ -90,97 +171,6 @@ export class EditorStore {
 
         return c;
 
-    }
-
-    addBlock(type: string, config) {
-        const component: ComponentData = this.getNewComponentDataInstance(type, config);
-
-        this.init([
-            component,
-            ...
-            store.components,
-        ]);
-    }
-
-    // moveComponentToContainer(c: ComponentData, )
-
-    addNewBlockToContainer(type: string, containerId: string, config) {
-        // copy data
-        const d = [...this.components];
-
-        if (!d || d.length <= 0) {
-            return;
-        }
-
-        const c = this.getNewComponentDataInstance(type, config);
-
-        const parent = this.findComponent(this.components, containerId);
-        if (!parent) {
-            return;
-        }
-
-        parent.props.children.push(c);
-    }
-
-    removeBlockToContainer(id: string, parentId: string, config) {
-        // copy data
-        const d = [...this.components];
-
-        if (!d || d.length <= 0) {
-            return;
-        }
-
-
-
-        const c = this.removeAndFindComponent(this.components, id);
-        if (!parentId
-            || parentId === 'root') {
-            this.addBlock(c.type, config);
-            return;
-        }
-
-        const parent = this.findComponent(this.components, parentId);
-        if (!parent) {
-            return;
-        }
-
-        parent.props.children.push(c);
-    }
-
-    removeAndFindComponent(
-        data: ComponentData[],
-        id: string) {
-        if (!data || data.length <= 0) {
-            return;
-        }
-
-        const index = data.findIndex(i => i.id === id);
-        if (index >= 0) {
-            const reuslt = data[index];
-            data.splice(index, 1);
-            return reuslt;
-        } else {
-            data.map(
-                d => this.removeAndFindComponent(d.props?.children?.id, id)
-            );
-        }
-
-        return null;
-    }
-
-    moveBlock(from: string, to: string) {
-        let data = [...store.components];
-
-        // console.log(JSON.stringify(data));
-        const oldIndex = data.findIndex(i => i.id === from);
-        const newIndex = data.findIndex(i => i.id === to);
-
-        console.log(`old: ${oldIndex}, new: ${newIndex}`)
-
-        data = arrayMove(data, oldIndex, newIndex);
-
-        // console.log(JSON.stringify(data));
-        this.init(data);
     }
 
     update(o) {
