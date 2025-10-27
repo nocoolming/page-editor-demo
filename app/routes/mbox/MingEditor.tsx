@@ -105,14 +105,22 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
 
 
                 const c = store.getNewComponentDataInstance(blockName, config);
-                const newData = store.addComponentToContainer(
+
+                const newData =  store.add(
                     store.components,
-                    containerId,
                     c,
+                    over.id
                 );
 
-                // console.log(newData);
                 store.init(newData);
+                // const newData = store.addComponentToContainer(
+                //     store.components,
+                //     containerId,
+                //     c,
+                // );
+
+                // console.log(newData);
+                // store.init(newData);
 
                 return;
             }
