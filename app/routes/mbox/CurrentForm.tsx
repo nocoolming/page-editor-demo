@@ -3,7 +3,12 @@ import { store } from "./store";
 import { useState } from "react";
 import type { Config } from "./config/type";
 
-function CurrentForm({ config }: { config: Config }) {
+function CurrentForm(
+    { config, onChange }:
+        {
+            config: Config,
+            onChange: (e) => void
+        }) {
     let c = store.currentComponent;
 
     // console.log('this is current form');
@@ -74,6 +79,7 @@ function CurrentForm({ config }: { config: Config }) {
                     // console.log(JSON.stringify(d));
                     store.init(d);
                     store.setCurrent(o);
+                    onChange(store.components)
                 }}
             >Save</button>
         </>

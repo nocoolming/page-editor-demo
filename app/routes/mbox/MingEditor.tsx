@@ -16,13 +16,15 @@ import CurrentForm from "./CurrentForm";
 import ComponentList from "./ComponentList";
 import type { ComponentData, Data } from "./config/Data";
 
-function MingEditor({ config, data }: { config: Config, data: Data }) {
-    // useEffect(() => {
-    //     const data = [];
-    //     store.init(data);
-    // }, []);
-
-    // console.log(JSON.stringify(store.components));
+function MingEditor({ config, data, onChange }
+    : {
+        config: Config,
+        data: Data,
+        onChange: (e) => void
+    }) {
+    useEffect(() => {
+        store.init(data.body || []);
+    }, []);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -62,7 +64,12 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
                 <div className="w-96 px-3 py-6 bg-yellow-50">
                     <h2>Form</h2>
 
-                    <CurrentForm config={config} />
+                    <CurrentForm
+                        config={config}
+                        onChange={e => onChange({
+                            ...data,
+                            body: store.components
+                        })} />
                 </div>
             </div>
 
@@ -86,6 +93,11 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
             );
 
             store.init(result);
+
+            onChange({
+                ...data,
+                body: store.components
+            })
             // store.addBlock(blockName, config);
             return;
         }
@@ -98,15 +110,10 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
 
             if (active.id.startsWith('tools-')) {
                 // debugger;
-                let containerId = over.id;
-                if (targetComponent.type !== 'Container') {
-                    containerId = 'root';
-                }
-
 
                 const c = store.getNewComponentDataInstance(blockName, config);
 
-                const newData =  store.add(
+                const newData = store.add(
                     store.components,
                     c,
                     over.id
@@ -122,10 +129,14 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
                 // console.log(newData);
                 // store.init(newData);
 
+                onChange({
+                    ...data,
+                    body: store.components
+                })
                 return;
             }
 
-            store.moveComponent( active.id, over.id);
+            store.moveComponent(active.id, over.id);
             // store.init(d);
             // console.log(JSON.stringify(d));
 
