@@ -14,13 +14,15 @@ import { useEffect } from "react";
 import type { Config } from "./config/type";
 import CurrentForm from "./CurrentForm";
 import ComponentList from "./ComponentList";
-import type { Data } from "./config/Data";
+import type { ComponentData, Data } from "./config/Data";
 
 function MingEditor({ config, data }: { config: Config, data: Data }) {
-    useEffect(() => {
-        const data = [];
-        store.init(data);
-    }, []);
+    // useEffect(() => {
+    //     const data = [];
+    //     store.init(data);
+    // }, []);
+
+    // console.log(JSON.stringify(store.components));
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -94,34 +96,37 @@ function MingEditor({ config, data }: { config: Config, data: Data }) {
                     store.components, over.id
                 );
 
-            let to: string = over.id;
-
-            if (targetComponent.type !== 'Container') {
-                to = 'root';
-            }
-
             if (active.id.startsWith('tools-')) {
                 // debugger;
+                let containerId = over.id;
+                if (targetComponent.type !== 'Container') {
+                    containerId = 'root';
+                }
+
 
                 const c = store.getNewComponentDataInstance(blockName, config);
                 const newData = store.addComponentToContainer(
                     store.components,
-                    to,
+                    containerId,
                     c,
                 );
 
+                // console.log(newData);
                 store.init(newData);
 
                 return;
             }
 
+            store.moveComponent( active.id, over.id);
+            // store.init(d);
+            // console.log(JSON.stringify(d));
 
 
-            store.moveComponentUniversal(active.id, to);
+            // console.log(JSON.stringify(store.components));
 
         }
 
-       
+
     }
 }
 

@@ -12,6 +12,10 @@ export function ProcessRender({ component, componentProps, config }) {
                 {
                     component.props?.children?.map(
                         c => {
+
+                            if(!c){
+                                return <p>null</p>
+                            }
                             return (
                                 <SortableItem
                                     key={c.id}

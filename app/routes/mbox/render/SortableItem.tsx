@@ -6,6 +6,9 @@ import { ProcessRender } from "./ProcessRender";
 
 export function SortableItem(props) {
     const { component, config } = props;
+    if(!component){
+        return <p>null</p>
+    }
     // debugger;
     // const componentConfig = config.components[component.type];
 

@@ -71,7 +71,7 @@ function CurrentForm({ config }: { config: Config }) {
 
                     // store.update(o);
                     const d = store.update(store.components, o);
-                    console.log(JSON.stringify(d));
+                    // console.log(JSON.stringify(d));
                     store.init(d);
                     store.setCurrent(o);
                 }}

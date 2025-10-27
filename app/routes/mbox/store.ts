@@ -38,63 +38,54 @@ export class EditorStore {
         this.currentValues = v;
     }
 
-    // setCurrentProps(k, v) {
-    //     this.currentProps = {
-    //         ...this.currentProps,
-    //         k: v
-    //     }
-    // }
-
-    saveComponent(o) {
-        this.update(o);
-    }
-
-
-    removeComponentFromTree(data: ComponentData[], id: string)
-        : {
+    removeComponentFromTree(
+        data: ComponentData[],
+        id: string,
+        deep: number = 0): {
             component: ComponentData | null,
             newData: ComponentData[]
         } {
+        if (deep > 1) {
+            console.log(`deep: ${deep}`);
+        }
+
+        if (deep > 20) {
+            return { component: null, newData: data }
+        } else {
+            deep++;
+        }
+
         if (!data || data.length === 0) {
-            return {
-                component: null,
-                newData: []
-            }
+            return { component: null, newData: [] };
         }
 
+        let component = null;
+        let newData = [...data];
+        let copyData: ComponentData[] = [];
 
-        const newData: ComponentData[] = [];
-        let removedComponent: ComponentData | null = null;
+        for (const c of newData) {
+            if (c.id === id) {
+                component = c;
+                // debugger;
+                // alert(JSON.stringify(c));
+                // console.log(`c: ${JSON.stringify(c)}`)
+                continue;
+            }
 
-        for (const item of data) {
-            if (item.id === id) {
-                removedComponent = item;
-            } else {
-                const newItem = { ...item };
-
-                if (item.props?.children && Array.isArray(item.props.children)) {
-                    // 递归处理children
-                    const childResult = this.removeComponentFromTree(item.props.children, id);
-
-                    // 更新children为处理后的结果
-                    newItem.props = {
-                        ...item.props,
-                        children: childResult.newData,
-                    };
-
-                    // 如果在children中找到了目标组件，记录它
-                    if (childResult.component) {
-                        removedComponent = childResult.component;
-                    }
+            if (c.type === 'Container') {
+                // debugger;
+                const result = this.removeComponentFromTree(c.props.children, id, deep);
+                c.props.children = result.newData;
+                if (result && result.component) {
+                    component = result.component;
                 }
-
-                newData.push(newItem);
             }
+
+            copyData.push(c);
         }
 
-        return { component: removedComponent, newData };
+        return { component, newData: copyData };
     }
-
     /**
  * 数组索引插入辅助方法
  */
@@ -105,6 +96,7 @@ export class EditorStore {
     ): ComponentData[] {
         const newArray = [...array];
 
+        // console.log(`index: ${index}`)
         // -1 特殊处理表示末尾，其他直接用 splice
         if (index === -1) {
             newArray.push(component);
@@ -114,6 +106,7 @@ export class EditorStore {
 
         return newArray;
     }
+
     addComponentToContainer(
         data: ComponentData[],
         containerId: string,
@@ -161,23 +154,149 @@ export class EditorStore {
 
     }
 
-    moveComponentUniversal(fromId: string, to: string) {
-        // 1. 移除组件
-        const removeResult = this.removeComponentFromTree(this.components, fromId);
+    add(
+        source: ComponentData[],
+        fromInstance: ComponentData,
+        to: String,
+        postion: number = -1
+    ): ComponentData[] {
+        // console.log('There is add function.')
 
-        if (!removeResult.component) {
-            return;
+        if (!source && source.length < 0) {
+            return source;
         }
 
-        const newData = this.addComponentToContainer(
-            removeResult.newData,
-            to,
-            removeResult.component,
-        );
+        let data = [...source];
 
-        this.components = newData;
+        let index: number = data.findIndex(i => i.id === to);
+        // console.log(JSON.stringify(data));
+        console.log(`index: ${index}`);
+
+
+        if (index < 0) {
+            // 本级没有 遍历子
+            for (let i = 0; i < data.length; i++) {
+                const c = data[i]
+                if (c.type === 'Container') {
+                    c.props.children = this.add(
+                        c.props.children,
+                        fromInstance,
+                        to
+                    );
+
+                    data[i] = c;
+                }
+            }
+            return data;
+        }
+
+        // if (index === data.length - 1) {
+        //     index++;
+        // }
+        const c = data[index];
+
+        if(c.type === 'Container'){
+            // 目标为container
+
+            c.props.children.push(fromInstance);
+
+            return data;
+        }
+
+        if (index === 0) {
+
+            data.splice(index, 0, fromInstance);
+        } else {
+            data.splice(index + 1, 0, fromInstance);
+        }
+
+        return data;
     }
 
+    moveComponent(
+        // data: ComponentData[],
+        from: string,
+        to: string): ComponentData[] {
+        // if (!data || data.length < 1) {
+        //     return data;
+        // }
+
+        let newData = [...this.components];
+        // console.log(JSON.stringify(newData));
+
+
+        const result = store.findAndRemove(newData, from);
+
+        if (!result.component) {
+            // from为null
+            return this.components;
+        }
+        newData = result.newData;
+
+        newData = this.add(
+            newData,
+            result.component,
+            to
+        )
+
+        this.components = newData;
+        return newData;
+    }
+
+    /**
+     * 在组件树中找到指定组件的位置
+     * @param data 组件数据数组
+     * @param targetId 要查找的组件ID
+     * @param parentId 当前层级的父容器ID，根级别为 'root'
+     * @returns { containerId: 容器ID, index: 在容器中的索引 }
+     */
+    findComponentPosition(
+        data: ComponentData[],
+        targetId: string,
+        parentId: string = 'root'
+    ): { containerId: string, index: number } | null {
+        if (!data || data.length === 0) {
+            return null;
+        }
+
+        console.log(`id: ${targetId}`);
+        console.log(JSON.stringify(data))
+        // 检查当前级别
+        const currentIndex = data.findIndex(item => item.id === targetId);
+        console.log(`current index: ${currentIndex}`)
+        if (currentIndex !== -1) {
+            return { containerId: parentId, index: currentIndex };
+        }
+
+        let toIndex = -1;
+        // 递归检查容器
+        const d = data.map((i, index) => {
+            console.log(index);
+            if (i.id === targetId) {
+                debugger;
+                toIndex = index;
+                return i;
+            }
+
+
+        })
+
+        console.log(`to index: ${toIndex}`)
+        // for (const item of data) {
+        //     if (item.props?.children && Array.isArray(item.props.children)) {
+        //         // 递归时传入当前 item.id 作为 parentId
+        //         const result = this.findComponentPosition(
+        //             item.props.children,
+        //             targetId,
+        //             item.id
+        //         );
+        //         return result;
+
+        //     }
+        // }
+
+        // return null;
+    }
 
     getNewComponentDataInstance(type: string, config) {
         const id: string = nanoid();
@@ -262,6 +381,22 @@ export class EditorStore {
 
         return null;
 
+    }
+
+    findAndRemove(source: ComponentData[], id: string): {
+        component: ComponentData,
+        newData: ComponentData[],
+    } {
+        const { component, newData } = this.removeComponentFromTree(source, id);
+
+        // console.log(`findAndRemove`)
+        // console.log(JSON.stringify(newData))
+        // this.components = newData;
+
+        return {
+            component,
+            newData: newData,
+        };
     }
 
 
