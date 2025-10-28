@@ -1,4 +1,4 @@
-import { store } from "../store";
+import { componentStore } from "../store/ComponentStore";
 import { SortableItem } from "./SortableItem";
 
 

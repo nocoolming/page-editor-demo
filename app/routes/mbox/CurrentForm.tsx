@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite"
-import { store } from "./store";
+import { componentStore } from "./store/ComponentStore";
 import { useState } from "react";
 import type { Config } from "./config/type";
 
@@ -9,7 +9,7 @@ function CurrentForm(
             config: Config,
             onChange: (e) => void
         }) {
-    let c = store.currentComponent;
+    let c = componentStore.currentComponent;
 
     // console.log('this is current form');
     // console.log(JSON.stringify(c));
@@ -21,9 +21,9 @@ function CurrentForm(
 
     return (
         <>
-            {/* <p>{JSON.stringify(store.currentValues)}</p>
+            {/* <p>{JSON.stringify(componentStore.currentValues)}</p>
             */}
-            {/* <p>{JSON.stringify(store.currentComponent)}</p> */}
+            {/* <p>{JSON.stringify(componentStore.currentComponent)}</p> */}
 
             <ol className="flex flex-col gap-3">
                 {
@@ -47,11 +47,11 @@ function CurrentForm(
                                     onChange={e => {
                                         // console.log(e.target.value);
                                         const v = {
-                                            ...store.currentValues,
+                                            ...componentStore.currentValues,
                                             [k]: e.target.value,
                                         }
 
-                                        store.setCurrentValues(v);
+                                        componentStore.setCurrentValues(v);
 
                                     }} />
                             </li>
@@ -67,19 +67,19 @@ function CurrentForm(
                     // debugger;
 
                     const o = {
-                        ...store.currentComponent,
+                        ...componentStore.currentComponent,
                         props: {
-                            ...store.currentComponent.props,
-                            ...store.currentValues,
+                            ...componentStore.currentComponent.props,
+                            ...componentStore.currentValues,
                         },
                     }
 
-                    // store.update(o);
-                    const d = store.update(store.components, o);
+                    // componentStore.update(o);
+                    const d = componentStore.update(componentStore.components, o);
                     // console.log(JSON.stringify(d));
-                    store.init(d);
-                    store.setCurrent(o);
-                    onChange(store.components)
+                    componentStore.init(d);
+                    componentStore.setCurrent(o);
+                    onChange(componentStore.components)
                 }}
             >Save</button>
         </>

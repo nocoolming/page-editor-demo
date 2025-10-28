@@ -6,7 +6,7 @@ import {
     useSensor,
     useSensors
 } from "@dnd-kit/core";
-import { store } from "./store";
+import { componentStore } from "./store/ComponentStore";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableItem } from "./render/SortableItem";
 import { observer } from "mobx-react-lite";
@@ -23,7 +23,7 @@ function MingEditor({ config, data, onChange }
         onChange: (e) => void
     }) {
     useEffect(() => {
-        store.init(data.body || []);
+        componentStore.init(data.body || []);
     }, []);
 
     const sensors = useSensors(
@@ -49,10 +49,10 @@ function MingEditor({ config, data, onChange }
                     <div className="flex flex-col gap-3 w-full">
                         <SortableContext
                             strategy={verticalListSortingStrategy}
-                            items={store.components} >
+                            items={componentStore.components} >
                             <div id='root'>
                                 {
-                                    store.components.map(
+                                    componentStore.components.map(
                                         i => <SortableItem key={i.id} component={{ ...i }} config={config} />
                                     )
                                 }
@@ -68,7 +68,7 @@ function MingEditor({ config, data, onChange }
                         config={config}
                         onChange={e => onChange({
                             ...data,
-                            body: store.components
+                            body: componentStore.components
                         })} />
                 </div>
             </div>
@@ -85,18 +85,18 @@ function MingEditor({ config, data, onChange }
         if (!over) {
             // 空画布
 
-            const c = store.getNewComponentDataInstance(blockName, config);
-            const result = store.addComponentToContainer(
-                store.components,
+            const c = componentStore.getNewComponentDataInstance(blockName, config);
+            const result = componentStore.addComponentToContainer(
+                componentStore.components,
                 'root',
                 c,
             );
 
-            store.init(result);
+            componentStore.init(result);
 
             onChange({
                 ...data,
-                body: store.components
+                body: componentStore.components
             })
             // store.addBlock(blockName, config);
             return;
@@ -104,44 +104,44 @@ function MingEditor({ config, data, onChange }
 
         if (active.id !== over.id) {
             const targetComponent
-                = store.findComponent(
-                    store.components, over.id
+                = componentStore.findComponent(
+                    componentStore.components, over.id
                 );
 
             if (active.id.startsWith('tools-')) {
                 // debugger;
 
-                const c = store.getNewComponentDataInstance(blockName, config);
+                const c = componentStore.getNewComponentDataInstance(blockName, config);
 
-                const newData = store.add(
-                    store.components,
+                const newData = componentStore.add(
+                    componentStore.components,
                     c,
                     over.id
                 );
 
-                store.init(newData);
-                // const newData = store.addComponentToContainer(
-                //     store.components,
+                componentStore.init(newData);
+                // const newData = componentStore.addComponentToContainer(
+                //     componentStore.components,
                 //     containerId,
                 //     c,
                 // );
 
                 // console.log(newData);
-                // store.init(newData);
+                // componentStore.init(newData);
 
                 onChange({
                     ...data,
-                    body: store.components
+                    body: componentStore.components
                 })
                 return;
             }
 
-            store.moveComponent(active.id, over.id);
-            // store.init(d);
+            componentStore.moveComponent(active.id, over.id);
+            // componentStore.init(d);
             // console.log(JSON.stringify(d));
 
 
-            // console.log(JSON.stringify(store.components));
+            // console.log(JSON.stringify(componentStore.components));
 
         }
 

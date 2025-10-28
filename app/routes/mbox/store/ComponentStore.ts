@@ -1,8 +1,9 @@
 import { makeAutoObservable } from "mobx";
-import type { ComponentData } from "./config/Data";
+import type { ComponentData } from "../config/Data";
 import { nanoid } from "nanoid";
+import { arrayMove } from "@dnd-kit/sortable";
 
-export class EditorStore {
+export class ComponentStore {
     components = [];
     currentId: string | null = null;
     currentComponent = null;
@@ -169,7 +170,7 @@ export class EditorStore {
         let data = [...source];
 
         let index: number = data.findIndex(i => i.id === to);
-        // console.log(JSON.stringify(data));
+        console.log(JSON.stringify(data));
         console.log(`index: ${index}`);
 
 
@@ -195,19 +196,21 @@ export class EditorStore {
         // }
         const c = data[index];
 
-        if(c.type === 'Container'){
+        if (c.type === 'Container') {
             // 目标为container
 
             c.props.children.push(fromInstance);
 
-            return data;
+            return data
         }
 
         if (index === 0) {
-
+            // this.removeComponentFromTree
             data.splice(index, 0, fromInstance);
-        } else {
+        } else if (index === data.length - 1) {
             data.splice(index + 1, 0, fromInstance);
+        } else {
+            data.splice(index, 0, fromInstance);
         }
 
         return data;
@@ -217,15 +220,30 @@ export class EditorStore {
         // data: ComponentData[],
         from: string,
         to: string): ComponentData[] {
-        // if (!data || data.length < 1) {
-        //     return data;
-        // }
 
+        //  先判断两个是否在root的兄弟结点
+        const result = this.moveSibling(
+            this.components,
+            from,
+            to
+        )
+
+        if (result.isSibling) {
+            this.components = result.data;
+
+            return this.components;
+        }
+
+        return this.forEachTree(from, to);
+    }
+
+    forEachTree(from: string, to: string) {
         let newData = [...this.components];
+
+
         // console.log(JSON.stringify(newData));
 
-
-        const result = store.findAndRemove(newData, from);
+        const result = this.findAndRemove(newData, from);
 
         if (!result.component) {
             // from为null
@@ -241,6 +259,46 @@ export class EditorStore {
 
         this.components = newData;
         return newData;
+    }
+
+    // 移动同层兄弟节点
+    moveSibling(data: ComponentData[], from: string, to: string)
+        : {
+            data: ComponentData[],
+            isSibling: boolean
+        } {
+        let newData = [...data];
+
+        const toIndex = newData.findIndex(i => i.id === to);
+        const fromIndex = newData.findIndex(i => i.id === from);
+
+        console.log(`from: ${fromIndex} to:${toIndex}`)
+
+        let isSibling: boolean = false;
+
+        if (fromIndex > -1 && toIndex > -1) {
+            const toContainer = data[toIndex];
+
+            // 先看目标位置 是不是容器
+            if (toContainer.type === 'Container') {
+                const fromContainer = data[fromIndex];
+
+                newData.splice(fromIndex, 1);
+
+                toContainer.props.children.push(fromContainer);
+
+
+            } else {
+                newData = arrayMove(newData, fromIndex, toIndex);
+            }
+
+            isSibling = true;
+        }
+
+        return {
+            data: newData,
+            isSibling
+        };
     }
 
     /**
@@ -403,4 +461,4 @@ export class EditorStore {
 
 }
 
-export const store = new EditorStore();
+export const componentStore = new ComponentStore();

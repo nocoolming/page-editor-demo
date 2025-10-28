@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities";
-import { store } from "../store";
+import { componentStore } from "../store/ComponentStore";
 import { ProcessRender } from "./ProcessRender";
 
 
@@ -58,7 +58,7 @@ export function SortableItem(props) {
                     e.preventDefault();
                     // console.log('Click me' + component.id + component.type);
                     // console.log(`current id: ${component.id}`)
-                    store.setCurrent(component);
+                    componentStore.setCurrent(component);
                 }}>
 
                 <ProcessRender component={component} componentProps={processedProps} config={config} />
