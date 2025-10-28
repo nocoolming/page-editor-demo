@@ -5,7 +5,25 @@ import MingEditor from "./MingEditor";
 
 function Editor() {
     const [data, setData] = useState(
-         { "header": [], "body": [{ "id": "bSI6emfWPqthOV9CyaQbx", "type": "Heading", "props": { "value": "11" } }, { "id": "nAeCfz7q4zhiBYK98k4xc", "type": "Heading", "props": { "value": "2" } }, { "id": "Flbsx433JkyX6KGJwCuaw", "type": "Heading", "props": { "value": "3" } }, { "id": "imu7wC-lsQMI6msEYcZT3", "type": "Heading", "props": { "value": "4" } }], "footer": [] }
+        {
+            body: [
+                {
+                    "id": "bSI6emfWPqthOV9CyaQbx",
+                    "type": "Heading",
+                    "props": { "value": "11" }
+                },
+                {
+                    "id": "y9vcO8hMRZ-J2McAUsC8z",
+                    "type": "Container",
+                    "props": {
+                        "children": [
+                            { "id": "Flbsx433JkyX6KGJwCuaw", "type": "Heading", "props": { "value": "3" } },
+                            { "id": "imu7wC-lsQMI6msEYcZT3", "type": "Heading", "props": { "value": "4" } }]
+                    }
+                }],
+            header: [],
+            footer: []
+        }
     );
 
     return (

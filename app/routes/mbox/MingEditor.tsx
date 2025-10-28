@@ -94,10 +94,14 @@ function MingEditor({ config, data, onChange }
 
             componentStore.init(result);
 
-            onChange({
+            const d = {
                 ...data,
                 body: componentStore.components
-            })
+            }
+
+            console.log(JSON.stringify(d));
+
+            onChange(d)
             // store.addBlock(blockName, config);
             return;
         }
